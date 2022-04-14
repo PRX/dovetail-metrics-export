@@ -5,7 +5,8 @@ LABEL org.prx.lambda="true"
 
 WORKDIR /app
 
-# ENTRYPOINT [ "npm", "run" ]
+ENTRYPOINT [ "npm", "run" ]
+CMD [ "test" ]
 
 RUN yum install -y rsync && yum clean all && rm -rf /var/cache/yum
 ADD yarn.lock ./

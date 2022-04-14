@@ -6,6 +6,7 @@
   },
   "description": "Export Dovetail metrics data",
   "scripts": {
+    "test": "echo Done",
     "build": "npm run build-sync && npm run build-prune && npm run build-zip",
     "build-sync": "rsync -crl --delete --exclude-from .lambdaignore . build",
     "build-prune": "cd build && yarn --production",
