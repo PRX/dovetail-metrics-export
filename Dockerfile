@@ -1,4 +1,4 @@
-FROM lambci/lambda:build-nodejs14.x
+FROM lambci/lambda:build-nodejs12.x
 
 MAINTAINER PRX <sysadmin@prx.org>
 LABEL org.prx.lambda="true"
