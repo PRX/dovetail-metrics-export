@@ -1,0 +1,27 @@
+{
+  "name": "dovetail-metrics-export",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">= 14.0.0"
+  },
+  "description": "Export Dovetail metrics data",
+  "scripts": {
+    "build": "npm run build-sync && npm run build-prune && npm run build-zip",
+    "build-sync": "rsync -crl --delete --exclude-from .lambdaignore . build",
+    "build-prune": "cd build && yarn --production",
+    "build-zip": "rm -f build.zip && cd build && zip -rq ../build.zip ."
+  },
+  "repository": "git@github.com:PRX/dovetail-metrics-export.git",
+  "keywords": [
+    "lambda",
+    "prx"
+  ],
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/PRX/dovetail-metrics-export.org/issues"
+  },
+  "homepage": "https://github.com/PRX/dovetail-metrics-export.org#readme",
+  "dependencies": {
+    "@google-cloud/bigquery": "^5.12.0"
+  }
+}
