@@ -8,8 +8,8 @@ module.exports = async function main(
   const query = `
     SELECT timestamp_trunc(timestamp, DAY) AS date,
       feeder_episode AS episode_id,
-      COUNT(*) AS download_count
-    FROM production.dt_downloads
+      COUNT(*) AS impression_count
+    FROM production.dt_impressions
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
@@ -32,7 +32,7 @@ module.exports = async function main(
         // Ensure that the filename after the prefix does not collide with any
         // other files created by this function, or they may overwrite each
         // other
-        destinationUri: `gs://${process.env.GCP_EXPORT_BUCKET}/${objectPrefix}downloads.csv.gz`,
+        destinationUri: `gs://${process.env.GCP_EXPORT_BUCKET}/${objectPrefix}impressions.csv.gz`,
         destinationFormat: 'CSV',
         printHeader: true,
         compression: 'GZIP',
