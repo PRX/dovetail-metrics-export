@@ -4,7 +4,8 @@ module.exports = async function main(bigQueryClient, podcastIds, objectPrefix) {
       podcast_id,
       title,
       subtitle,
-      published_at
+      published_at,
+      TO_JSON_STRING(keywords) as keywords_json
     FROM production.episodes
     WHERE podcast_id IN (${podcastIds.join(', ')})
   `;
