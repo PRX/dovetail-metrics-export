@@ -1,11 +1,17 @@
-module.exports = async function main(bigQueryClient, podcastIds, objectPrefix) {
+const MakeCopies = require('../make_copies');
+
+module.exports = async function main(event, bigQueryClient, objectPrefix) {
+  if (!event?.Jobs?.includes('PodcastMetadata')) {
+    return;
+  }
+
   const query = `
     SELECT id,
       title,
       subtitle,
       published_at
     FROM production.podcasts
-    WHERE id IN (${podcastIds.join(', ')})
+    WHERE id IN (${event.PodcastIDs.join(', ')})
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });
 
@@ -33,4 +39,6 @@ module.exports = async function main(bigQueryClient, podcastIds, objectPrefix) {
     extractJob.on('complete', resolve);
     extractJob.on('error', reject);
   });
+
+  await MakeCopies(event, bucketName, objectName);
 };

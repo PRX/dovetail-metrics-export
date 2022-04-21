@@ -1,10 +1,16 @@
+const MakeCopies = require('../make_copies');
+
 module.exports = async function main(
+  event,
   bigQueryClient,
-  podcastIds,
   inclusiveRangeStart,
   exclusiveRangeEnd,
   objectPrefix,
 ) {
+  if (!event?.Jobs?.includes('Downloads')) {
+    return;
+  }
+
   const query = `
     SELECT timestamp_trunc(timestamp, DAY) AS date,
       feeder_episode AS episode_id,
@@ -13,7 +19,7 @@ module.exports = async function main(
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
-      AND feeder_podcast IN (${podcastIds.join(', ')})
+      AND feeder_podcast IN (${event.PodcastIDs.join(', ')})
     GROUP BY date, feeder_episode
     ORDER BY date ASC, episode_id ASC
   `;
@@ -44,4 +50,6 @@ module.exports = async function main(
     extractJob.on('complete', resolve);
     extractJob.on('error', reject);
   });
+
+  await MakeCopies(event, bucketName, objectName);
 };

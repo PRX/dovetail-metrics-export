@@ -1,4 +1,10 @@
-module.exports = async function main(bigQueryClient, objectPrefix) {
+const MakeCopies = require('../make_copies');
+
+module.exports = async function main(event, bigQueryClient, objectPrefix) {
+  if (!event?.Jobs?.includes('GeoMetadata')) {
+    return;
+  }
+
   const query = `
     SELECT geoname_id,
       metro_code,
@@ -14,6 +20,9 @@ module.exports = async function main(bigQueryClient, objectPrefix) {
     queryJob.on('error', reject);
   });
 
+  const bucketName = process.env.GCP_EXPORT_BUCKET;
+  const objectName = `${objectPrefix}geo_metadata.csv.gz`;
+
   const [extractJob] = await bigQueryClient.createJob({
     configuration: {
       extract: {
@@ -21,7 +30,7 @@ module.exports = async function main(bigQueryClient, objectPrefix) {
         // Ensure that the filename after the prefix does not collide with any
         // other files created by this function, or they may overwrite each
         // other
-        destinationUri: `gs://${process.env.GCP_EXPORT_BUCKET}/${objectPrefix}geo_metadata.csv.gz`,
+        destinationUri: `gs://${bucketName}/${objectName}`,
         destinationFormat: 'CSV',
         printHeader: true,
         compression: 'GZIP',
@@ -33,4 +42,6 @@ module.exports = async function main(bigQueryClient, objectPrefix) {
     extractJob.on('complete', resolve);
     extractJob.on('error', reject);
   });
+
+  await MakeCopies(event, bucketName, objectName);
 };

@@ -67,6 +67,7 @@ exports.handler = async (event, context) => {
     return;
   }
 
+  // Include all jobs by default
   if (!event?.Jobs || !Array.isArray(event?.Jobs)) {
     event.Jobs = [
       'Downloads',
@@ -106,38 +107,25 @@ exports.handler = async (event, context) => {
   // TODO Check to make sure the data we want to export seems complete
   const doExport = true;
 
-  // TODO Support selective export in the event data
   if (doExport) {
-    if (event?.Jobs?.includes('Downloads')) {
-      await ExportDownloads(
-        bigQueryClient,
-        podcastIds,
-        inclusiveRangeStart,
-        exclusiveRangeEnd,
-        objectPrefix,
-      );
-    }
+    await ExportDownloads(
+      event,
+      bigQueryClient,
+      inclusiveRangeStart,
+      exclusiveRangeEnd,
+      objectPrefix,
+    );
 
-    if (event?.Jobs?.includes('Impressions')) {
-      await ExportImpressions(
-        bigQueryClient,
-        podcastIds,
-        inclusiveRangeStart,
-        exclusiveRangeEnd,
-        objectPrefix,
-      );
-    }
+    await ExportImpressions(
+      event,
+      bigQueryClient,
+      inclusiveRangeStart,
+      exclusiveRangeEnd,
+      objectPrefix,
+    );
 
-    if (event?.Jobs?.includes('PodcastMetadata')) {
-      await ExportPodcastMetadata(bigQueryClient, podcastIds, objectPrefix);
-    }
-
-    if (event?.Jobs?.includes('EpisodeMetadata')) {
-      await ExportEpisodeMetadata(bigQueryClient, podcastIds, objectPrefix);
-    }
-
-    if (event?.Jobs?.includes('GeoMetadata')) {
-      await ExportGeoMetadata(bigQueryClient, objectPrefix);
-    }
+    await ExportPodcastMetadata(event, bigQueryClient, objectPrefix);
+    await ExportEpisodeMetadata(event, bigQueryClient, objectPrefix);
+    await ExportGeoMetadata(event, bigQueryClient, objectPrefix);
   }
 };
