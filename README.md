@@ -1,3 +1,15 @@
+### Output Files
+
+All files are currently CSV formatted and compressed with GZIP. The CSV data includes column headers.
+
+Excluding all prefixes, the resulting files in Google Cloud Storage are named:
+
+- downloads.csv.gz
+- impressions.csv.gz
+- podcast_metadata.csv.gz
+- episode_metadata.csv.gz
+- geo_metadata.csv.gz
+
 #### Default Date Range
 
 If the `Range` property is excluded from the input, the default range will start (inclusive) at midnight yesterday (UTC) and end (exclusive) at midnight today (UTC).
@@ -32,6 +44,11 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   Jobs: [
     Downloads,
     Impressions
-  ]
+  ],
+  # OPTIONAL
+  # - A prefix that is added to all files created in Google Cloud Storage.
+  # - This string must include a trailing slash if you want to separate the
+  #   prefix and the rest of the file name with a slash.
+  ObjectPrefix: "Acme/Daily/"
 }
 ```

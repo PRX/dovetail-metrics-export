@@ -1,10 +1,11 @@
 const AWS = require('aws-sdk');
 const { BigQuery } = require('@google-cloud/bigquery');
-const ExportDownloads = require('./downloads');
-const ExportImpressions = require('./impressions');
-const ExportEpisodeMetadata = require('./episode_metadata');
-const ExportPodcastMetadata = require('./podcast_metadata');
-const ExportGeoMetadata = require('./geo_metadata');
+
+const ExportDownloads = require('./jobs/downloads');
+const ExportImpressions = require('./jobs/impressions');
+const ExportEpisodeMetadata = require('./jobs/episode_metadata');
+const ExportPodcastMetadata = require('./jobs/podcast_metadata');
+const ExportGeoMetadata = require('./jobs/geo_metadata');
 
 const ssm = new AWS.SSM({ apiVersion: '2014-11-06' });
 
@@ -29,6 +30,7 @@ exports.handler = async (event, context) => {
   // TODO Move outside handler if we end up using this a lot
   const param = await ssm
     .getParameter({
+      // TODO
       Name: '/prx/stag/dovetail-metrics-export/BQ_CREDENTIALS',
     })
     .promise();
@@ -61,7 +63,7 @@ exports.handler = async (event, context) => {
   }
 
   if (!event?.PodcastIDs?.length > 1) {
-    // bad shows input
+    // bad podcast IDs input
     return;
   }
 
