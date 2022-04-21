@@ -49,6 +49,20 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - A prefix that is added to all files created in Google Cloud Storage.
   # - This string must include a trailing slash if you want to separate the
   #   prefix and the rest of the file name with a slash.
-  ObjectPrefix: "Acme/Daily/"
+  ObjectPrefix: "Acme/Daily/",
+  # OPTIONAL
+  # - If included MUST be an array of objects.
+  # - Each object contains part of a Porter Copy task input: only the Mode and
+  #   BucketName.
+  # - Each file created by the export function will be copied using the given
+  #   configuration by Porter. The object name in Google Cloud Storage will be
+  #   preserveds.
+  # - Currently only supports AWS/S3.
+  Copies: [
+    {
+      "Mode": "AWS/S3",
+      "BucketName": "MyBucket",
+    }
+  ]
 }
 ```
