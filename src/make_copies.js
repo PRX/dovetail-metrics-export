@@ -26,7 +26,7 @@ module.exports = async function main(
             Source: {
               Mode: 'GCP/Storage',
               ProjectId: projectId,
-              Credentials: credentials,
+              ClientConfiguration: credentials,
               BucketName: bucketName,
               ObjectName: objectName,
             },
