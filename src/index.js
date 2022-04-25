@@ -37,7 +37,9 @@ exports.handler = async (event, context) => {
   const gcpConfig = JSON.parse(param.Parameter.Value);
 
   const bigQueryClient = new BigQuery({
-    projectId: gcpConfig.project_id,
+    projectId:
+      gcpConfig.project_id ||
+      gcpConfig.audience.match(/projects\/([0-9]+)\/locations/)[1],
     credentials: gcpConfig,
   });
 
@@ -84,8 +86,6 @@ exports.handler = async (event, context) => {
   const exclusiveRangeEnd = event?.Range?.[1]
     ? new Date(Date.parse(event.Range[1]))
     : defaultRangeEnd();
-
-  const podcastIds = event.PodcastIDs;
 
   // A prefix defined on the input, which should include a trailing slash if
   // it should be separated from the automatic part of the full prefix
