@@ -55,9 +55,9 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - Each object contains part of a Porter Copy task input: only the Mode and
   #   BucketName.
   # - Each file created by the export function will be copied using the given
-  #   configuration by Porter. The object name in Google Cloud Storage will be
-  #   preserveds.
-  # - Currently only supports AWS/S3.
+  #   configuration by Porter. The object name from Google Cloud Storage will
+  #   be preserved.
+  # - Currently only supports AWS/S3 as destinations. The source is alwasy GCS.
   Copies: [
     {
       "Mode": "AWS/S3",
