@@ -20,6 +20,9 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
     queryJob.on('error', reject);
   });
 
+  const bucketName = process.env.GCP_EXPORT_BUCKET;
+  const objectName = `${objectPrefix}podcast_metadata.csv.gz`;
+
   const [extractJob] = await bigQueryClient.createJob({
     configuration: {
       extract: {
@@ -27,7 +30,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
         // Ensure that the filename after the prefix does not collide with any
         // other files created by this function, or they may overwrite each
         // other
-        destinationUri: `gs://${process.env.GCP_EXPORT_BUCKET}/${objectPrefix}podcast_metadata.csv.gz`,
+        destinationUri: `gs://${bucketName}/${objectName}`,
         destinationFormat: 'CSV',
         printHeader: true,
         compression: 'GZIP',
@@ -40,5 +43,10 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
     extractJob.on('error', reject);
   });
 
-  await MakeCopies(event, bucketName, objectName);
+  await MakeCopies(
+    event,
+    bigQueryClient.authClient.jsonContent,
+    bucketName,
+    objectName,
+  );
 };

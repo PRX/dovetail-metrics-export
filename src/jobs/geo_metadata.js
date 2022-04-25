@@ -43,5 +43,10 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
     extractJob.on('error', reject);
   });
 
-  await MakeCopies(event, bucketName, objectName);
+  await MakeCopies(
+    event,
+    bigQueryClient.authClient.jsonContent,
+    bucketName,
+    objectName,
+  );
 };

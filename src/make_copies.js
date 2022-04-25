@@ -1,21 +1,32 @@
 const AWS = require('aws-sdk');
 
-const sns = new AWS.SNS({ apiVersion: '2010-03-31' }); /**
+const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
 
-*
+/**
  * @param {object} event
  * @param {string} bucketName - The name of the bucket with the exported object
  * @param {string} objectName - The name of the exported object in Google Cloud Storage
  */
-module.exports = async function main(event, bucketName, objectName) {
+module.exports = async function main(
+  event,
+  credentials,
+  bucketName,
+  objectName,
+) {
   if (event?.copies?.length) {
+    const projectId =
+      credentials.project_id ||
+      credentials.audience.match(/projects\/([0-9]+)\/locations/)[1];
+
     await sns
       .publish({
         Message: JSON.stringify({
           Job: {
-            Id: 123213, // TODO
+            Id: `${bucketName}/${objectName}`,
             Source: {
               Mode: 'GCP/Storage',
+              ProjectId: projectId,
+              Credentials: credentials,
               BucketName: bucketName,
               ObjectName: objectName,
             },
