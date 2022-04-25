@@ -30,17 +30,16 @@ module.exports = async function main(
               BucketName: bucketName,
               ObjectName: objectName,
             },
+            // Create a copy task for each copy on the input event
             Tasks: event.Copies.map((c) => {
+              return {
+                Type: 'Copy',
+                Mode: c.Mode,
+                BucketName: c.BucketName,
+                ObjectKey: objectName,
+              };
+            }),
           },
-          // Create a copy task for each copy on the input event
-          Tasks: copies.map((c) => {
-            return {
-              Type: 'Copy',
-              Mode: c.Mode,
-              BucketName: c.BucketName,
-              ObjectKey: objectName,
-            };
-          }),
         }),
         TopicArn: process.env.PORTER_SNS_TOPIC,
       })
