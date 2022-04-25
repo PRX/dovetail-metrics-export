@@ -13,7 +13,7 @@ module.exports = async function main(
   bucketName,
   objectName,
 ) {
-  if (event?.copies?.length) {
+  if (event?.Copies?.length) {
     const projectId =
       credentials.project_id ||
       credentials.audience.match(/projects\/([0-9]+)\/locations/)[1];
@@ -30,6 +30,7 @@ module.exports = async function main(
               BucketName: bucketName,
               ObjectName: objectName,
             },
+            Tasks: event.Copies.map((c) => {
           },
           // Create a copy task for each copy on the input event
           Tasks: copies.map((c) => {
