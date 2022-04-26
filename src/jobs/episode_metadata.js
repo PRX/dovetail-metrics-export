@@ -6,11 +6,19 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
   }
 
   const query = `
-    SELECT id,
+    SELECT
+      id,
       podcast_id,
       title,
       subtitle,
+      image_url,
+      created_at,
+      updated_at,
       published_at,
+      released_at,
+      deleted_at,
+      segment_count,
+      audio_version,
       TO_JSON_STRING(keywords) as keywords_json
     FROM production.episodes
     WHERE podcast_id IN (${event.PodcastIDs.join(', ')})

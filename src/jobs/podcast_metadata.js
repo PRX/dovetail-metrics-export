@@ -6,10 +6,16 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
   }
 
   const query = `
-    SELECT id,
+    SELECT
+      id,
+      account_id,
       title,
       subtitle,
-      published_at
+      image_url,
+      created_at,
+      updated_at,
+      published_at,
+      deleted_at
     FROM production.podcasts
     WHERE id IN (${event.PodcastIDs.join(', ')})
   `;

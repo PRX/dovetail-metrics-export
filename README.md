@@ -46,6 +46,7 @@ Excluding all prefixes, the resulting files in Google Cloud Storage are named:
 - podcast_metadata.csv.gz
 - episode_metadata.csv.gz
 - geo_metadata.csv.gz
+- user_agent_metadata.csv.gz
 
 #### Default Date Range
 
@@ -78,6 +79,7 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - PodcastMetadata
   # - EpisodeMetadata
   # - GeoMetadata
+  # - UserAgentMetadata
   Jobs: [
     Downloads,
     Impressions

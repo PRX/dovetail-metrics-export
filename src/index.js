@@ -6,6 +6,7 @@ const ExportImpressions = require('./jobs/impressions');
 const ExportEpisodeMetadata = require('./jobs/episode_metadata');
 const ExportPodcastMetadata = require('./jobs/podcast_metadata');
 const ExportGeoMetadata = require('./jobs/geo_metadata');
+const ExportUserAgentMetadata = require('./jobs/user_agent_metadata');
 
 const ssm = new AWS.SSM({ apiVersion: '2014-11-06' });
 
@@ -77,6 +78,7 @@ exports.handler = async (event, context) => {
       'PodcastMetadata',
       'EpisodeMetadata',
       'GeoMetadata',
+      'UserAgentMetadata',
     ];
   }
 
@@ -135,6 +137,11 @@ exports.handler = async (event, context) => {
       objectPrefix,
     );
     const geoMetadata = ExportGeoMetadata(event, bigQueryClient, objectPrefix);
+    const userAgentMetadata = ExportUserAgentMetadata(
+      event,
+      bigQueryClient,
+      objectPrefix,
+    );
 
     await Promise.all([
       downloads,
@@ -142,6 +149,7 @@ exports.handler = async (event, context) => {
       podcastMetadata,
       episodeMetadata,
       geoMetadata,
+      userAgentMetadata,
     ]);
   }
 };

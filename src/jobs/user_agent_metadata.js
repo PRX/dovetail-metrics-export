@@ -1,46 +1,17 @@
 const MakeCopies = require('../make_copies');
 
-module.exports = async function main(
-  event,
-  bigQueryClient,
-  inclusiveRangeStart,
-  exclusiveRangeEnd,
-  objectPrefix,
-) {
-  if (!event?.Jobs?.includes('Downloads')) {
+module.exports = async function main(event, bigQueryClient, objectPrefix) {
+  if (!event?.Jobs?.includes('UserAgentMetadata')) {
     return;
   }
 
   const query = `
     SELECT
-      timestamp_trunc(timestamp, DAY) AS date,
-      request_uuid,
-      feeder_podcast AS podcast_id,
-      feeder_episode AS episode_id,
-      digest,
-      ad_count,
-      -- is_duplicate
-      cause,
-      remote_referrer,
-      remote_agent,
-      remote_ip,
-      agent_name_id,
-      agent_type_id,
-      agent_os_id,
-      city_geoname_id,
-      country_geoname_id,
-      -- is_confirmed
-      url,
-      listener_id,
-      listener_episode
-    FROM production.dt_downloads
-    WHERE timestamp >= ?
-      AND timestamp < ?
-      AND is_duplicate = false
-      AND feeder_podcast IN (${event.PodcastIDs.join(', ')})
+      agentname_id,
+      tag
+    FROM production.agentnames
   `;
-  const params = [inclusiveRangeStart, exclusiveRangeEnd];
-  const [queryJob] = await bigQueryClient.createQueryJob({ query, params });
+  const [queryJob] = await bigQueryClient.createQueryJob({ query });
 
   const queryMetadata = await new Promise((resolve, reject) => {
     queryJob.on('complete', resolve);
@@ -48,7 +19,7 @@ module.exports = async function main(
   });
 
   const bucketName = process.env.GCP_EXPORT_BUCKET;
-  const objectName = `${objectPrefix}downloads.csv.gz`;
+  const objectName = `${objectPrefix}user_agent_metadata.csv.gz`;
 
   const [extractJob] = await bigQueryClient.createJob({
     configuration: {

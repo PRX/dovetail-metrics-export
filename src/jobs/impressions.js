@@ -12,16 +12,40 @@ module.exports = async function main(
   }
 
   const query = `
-    SELECT timestamp_trunc(timestamp, DAY) AS date,
+    SELECT
+      timestamp_trunc(timestamp, DAY) AS date,
+      request_uuid,
+      feeder_podcast AS podcast_id,
       feeder_episode AS episode_id,
-      COUNT(*) AS impression_count
+      -- is_duplicate,
+      cause,
+      ad_id,
+      campaign_id,
+      creative_id,
+      flight_id,
+      -- is_confirmed,
+      digest,
+      segment,
+      placements_key,
+      zone_name,
+      target_path,
+      -- vast_advertiser,
+      -- vast_ad_id,
+      -- vast_creative_id,
+      -- vast_price_value,
+      -- vast_price_currency,
+      -- vast_price_model,
+      agent_name_id,
+      agent_type_id,
+      agent_os_id,
+      listener_id,
+      city_geoname_id,
+      country_geoname_id
     FROM production.dt_impressions
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
       AND feeder_podcast IN (${event.PodcastIDs.join(', ')})
-    GROUP BY date, feeder_episode
-    ORDER BY date ASC, episode_id ASC
   `;
   const params = [inclusiveRangeStart, exclusiveRangeEnd];
   const [queryJob] = await bigQueryClient.createQueryJob({ query, params });

@@ -6,11 +6,20 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
   }
 
   const query = `
-    SELECT geoname_id,
+    SELECT
+      geoname_id,
       metro_code,
+      locale_code,
+      continent_code,
+      continent_name,
       country_iso_code,
       country_name,
-      city_name
+      subdivision_1_iso_code,
+      subdivision_1_name,
+      subdivision_2_iso_code,
+      subdivision_2_name,
+      city_name,
+      time_zone
     FROM production.geonames
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });
