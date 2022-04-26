@@ -31,7 +31,7 @@ exports.handler = async (event, context) => {
   const param = await ssm
     .getParameter({
       // TODO
-      Name: '/prx/stag/dovetail-metrics-export/BQ_CREDENTIALS',
+      Name: process.env.GCP_CLIENT_CONFIG_PARAMETER_NAME,
     })
     .promise();
   const gcpConfig = JSON.parse(param.Parameter.Value);
