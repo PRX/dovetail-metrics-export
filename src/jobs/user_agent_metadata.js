@@ -9,7 +9,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
     SELECT
       agentname_id,
       tag
-    FROM production.agentnames
+    FROM ${process.env.BIGQUERY_DATASET}.agentnames
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });
 

@@ -20,7 +20,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
       subdivision_2_name,
       city_name,
       time_zone
-    FROM production.geonames
+    FROM ${process.env.BIGQUERY_DATASET}.geonames
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });
 

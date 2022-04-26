@@ -33,7 +33,7 @@ module.exports = async function main(
       url,
       listener_id,
       listener_episode
-    FROM production.dt_downloads
+    FROM ${process.env.BIGQUERY_DATASET}.dt_downloads
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false

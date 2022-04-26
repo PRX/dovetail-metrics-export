@@ -16,7 +16,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
       updated_at,
       published_at,
       deleted_at
-    FROM production.podcasts
+    FROM ${process.env.BIGQUERY_DATASET}.podcasts
     WHERE id IN (${event.PodcastIDs.join(', ')})
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });

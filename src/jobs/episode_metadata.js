@@ -20,7 +20,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
       segment_count,
       audio_version,
       TO_JSON_STRING(keywords) as keywords_json
-    FROM production.episodes
+    FROM ${process.env.BIGQUERY_DATASET}.episodes
     WHERE podcast_id IN (${event.PodcastIDs.join(', ')})
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });

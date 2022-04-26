@@ -41,7 +41,7 @@ module.exports = async function main(
       listener_id,
       city_geoname_id,
       country_geoname_id
-    FROM production.dt_impressions
+    FROM ${process.env.BIGQUERY_DATASET}.dt_impressions
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
