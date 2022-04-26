@@ -29,6 +29,12 @@ The `audience` should point to an identity provider that will grant access to th
 
 This client configuration is also passed to [Porter](https://github.com/PRX/Porter), allowing Porter to [read](https://github.com/PRX/Porter#google-cloud-storage-read-permissions) source files from Google Cloud Storage. Therefore, the identity provider must **also** grant access to the AWS IAM role used by Porter for ingesting files.
 
+The identity provider attribute condition should look something like:
+
+```
+('arn:aws:sts::123456789012:assumed-role/ExportFunctionRole-TKTKTKTKTK' == attribute.aws_role) || ('arn:aws:sts::123456789012:assumed-role/porter-IngestLambdaIamRole-TKTKTKTKTK' == attribute.aws_role)
+```
+
 ### Output Files
 
 All files are currently CSV formatted and compressed with GZIP. The CSV data includes column headers.
