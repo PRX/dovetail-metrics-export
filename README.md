@@ -1,3 +1,34 @@
+### GCP API Access
+
+While this Lambda function run in AWS, it makes API calls to Google Cloud via the GCP SDK, and thus needs GCP credentials. Rather than using static API keys, the expectation is that the `GCP_CLIENT_CONFIG_PARAMETER_NAME` value in Parameter Store will contain a client config that takes advantage of [workload identity federation](https://cloud.google.com/iam/docs/workload-identity-federation). The config should look something like this:
+
+```json
+{
+  "service_account_impersonation_url": "https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/MY_SERVICE_ACCOUNT@MY_GCP_PROJECT_ID.iam.gserviceaccount.com:generateAccessToken",
+  "audience": "//iam.googleapis.com/projects/MY_GCP_PROJECT_NUMBER/locations/global/workloadIdentityPools/MY_POOL_ID/providers/MY_PROVIDER_ID",
+  "type": "external_account",
+  "subject_token_type": "urn:ietf:params:aws:token-type:aws4_request",
+  "token_url": "https://sts.googleapis.com/v1/token",
+  "credential_source": {
+    "environment_id": "aws1",
+    "region_url": "http://169.254.169.254/latest/meta-data/placement/availability-zone",
+    "url": "http://169.254.169.254/latest/meta-data/iam/security-credentials",
+    "regional_cred_verification_url": "https://sts.{region}.amazonaws.com?Action=GetCallerIdentity&Version=2011-06-15"
+  }
+}
+```
+
+The `service_account_impersonation_url` should include the email of a service account in GCP with the following permissions:
+
+- BigQuery Job User (`roles/bigquery.jobUser`) to create BigQuery Jobs
+- BigQuery Data Viewer (`roles/bigquery.dataViewer`) to read data from BigQuery for the jobs
+- Storage Object Creator (`roles/storage.objectCreator`) to write the results of the jobs to Storage
+- Storage Object Viewer (`roles/storage.objectViewer`) to read the results of the jobs from Storage
+
+The `audience` should point to an identity provider that will grant access to the AWS IAM execution role used by the Lambda function.
+
+This client configuration is also passed to [Porter](https://github.com/PRX/Porter), allowing Porter to [read](https://github.com/PRX/Porter#google-cloud-storage-read-permissions) source files from Google Cloud Storage. Therefore, the identity provider must **also** grant access to the AWS IAM role used by Porter for ingesting files.
+
 ### Output Files
 
 All files are currently CSV formatted and compressed with GZIP. The CSV data includes column headers.
