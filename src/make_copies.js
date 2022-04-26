@@ -3,6 +3,9 @@ const AWS = require('aws-sdk');
 const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
 
 /**
+ * Sends Copy tasks to Porter to copy an object from Google Cloud Storage to
+ * Porter-supported destinations. The destination file name will be the same as
+ * the full source object name (including all prefixes).
  * @param {object} event
  * @param {string} bucketName - The name of the bucket with the exported object
  * @param {string} objectName - The name of the exported object in Google Cloud Storage
