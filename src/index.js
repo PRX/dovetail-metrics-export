@@ -108,7 +108,7 @@ exports.handler = async (event, context) => {
   const doExport = true;
 
   if (doExport) {
-    await ExportDownloads(
+    const downloads = ExportDownloads(
       event,
       bigQueryClient,
       inclusiveRangeStart,
@@ -116,7 +116,7 @@ exports.handler = async (event, context) => {
       objectPrefix,
     );
 
-    await ExportImpressions(
+    const impressions = ExportImpressions(
       event,
       bigQueryClient,
       inclusiveRangeStart,
@@ -124,8 +124,24 @@ exports.handler = async (event, context) => {
       objectPrefix,
     );
 
-    await ExportPodcastMetadata(event, bigQueryClient, objectPrefix);
-    await ExportEpisodeMetadata(event, bigQueryClient, objectPrefix);
-    await ExportGeoMetadata(event, bigQueryClient, objectPrefix);
+    const podcastMetadata = ExportPodcastMetadata(
+      event,
+      bigQueryClient,
+      objectPrefix,
+    );
+    const episodeMetadata = ExportEpisodeMetadata(
+      event,
+      bigQueryClient,
+      objectPrefix,
+    );
+    const geoMetadata = ExportGeoMetadata(event, bigQueryClient, objectPrefix);
+
+    await Promise.all([
+      downloads,
+      impressions,
+      podcastMetadata,
+      episodeMetadata,
+      geoMetadata,
+    ]);
   }
 };
