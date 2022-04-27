@@ -13,7 +13,7 @@ module.exports = async function main(
 
   const query = `
     SELECT
-      timestamp_trunc(timestamp, DAY) AS date,
+      timestamp,
       request_uuid,
       feeder_podcast AS podcast_id,
       feeder_episode AS episode_id,
