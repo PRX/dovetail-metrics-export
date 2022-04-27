@@ -18,7 +18,7 @@ module.exports = async function main(
       feeder_podcast AS podcast_id,
       feeder_episode AS episode_id,
       -- is_duplicate,
-      cause,
+      -- cause,
       ad_id,
       campaign_id,
       creative_id,

@@ -20,7 +20,7 @@ module.exports = async function main(
       digest,
       ad_count,
       -- is_duplicate
-      cause,
+      -- cause,
       remote_referrer,
       remote_agent,
       remote_ip,
