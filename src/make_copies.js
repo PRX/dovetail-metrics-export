@@ -39,7 +39,7 @@ module.exports = async function main(
                 Type: 'Copy',
                 Mode: c.Mode,
                 BucketName: c.BucketName,
-                ObjectKey: objectName,
+                ObjectKey: [c.DestinationPrefix, objectName].join(''),
               };
             }),
           },
