@@ -27,7 +27,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
   });
 
   const bucketName = process.env.GCP_EXPORT_BUCKET;
-  const objectName = `${objectPrefix}podcast_metadata.csv.gz`;
+  const objectName = `${objectPrefix}podcast_metadata.ndjson.gz`;
 
   const [extractJob] = await bigQueryClient.createJob({
     configuration: {
@@ -37,7 +37,7 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
         // other files created by this function, or they may overwrite each
         // other
         destinationUri: `gs://${bucketName}/${objectName}`,
-        destinationFormat: 'CSV',
+        destinationFormat: 'NEWLINE_DELIMITED_JSON',
         printHeader: true,
         compression: 'GZIP',
       },

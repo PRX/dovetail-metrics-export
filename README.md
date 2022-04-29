@@ -37,16 +37,16 @@ The identity provider attribute condition should look something like:
 
 ### Output Files
 
-All files are currently CSV formatted and compressed with GZIP. The CSV data includes column headers.
+All files are currently formatted as newline-delimited JSON and compressed with GZIP.
 
 Excluding all prefixes, the resulting files in Google Cloud Storage are named:
 
-- downloads.csv.gz
-- impressions.csv.gz
-- podcast_metadata.csv.gz
-- episode_metadata.csv.gz
-- geo_metadata.csv.gz
-- user_agent_metadata.csv.gz
+- downloads.ndjson.gz
+- impressions.ndjson.gz
+- podcast_metadata.ndjson.gz
+- episode_metadata.ndjson.gz
+- geo_metadata.ndjson.gz
+- user_agent_metadata.ndjson.gz
 
 #### Default Date Range
 
