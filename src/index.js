@@ -28,6 +28,8 @@ function defaultRangeEnd() {
 }
 
 exports.handler = async (event, context) => {
+  console.log(JSON.stringify({ Event: event }));
+
   // TODO Move outside handler if we end up using this a lot
   const param = await ssm
     .getParameter({
@@ -88,6 +90,8 @@ exports.handler = async (event, context) => {
   const exclusiveRangeEnd = event?.Range?.[1]
     ? new Date(Date.parse(event.Range[1]))
     : defaultRangeEnd();
+
+  console.log(JSON.stringify({ ExportJobs: event.Jobs, Range: event.Range }));
 
   // A prefix defined on the input, which should include a trailing slash if
   // it should be separated from the automatic part of the full prefix

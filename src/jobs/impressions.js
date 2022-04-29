@@ -50,6 +50,10 @@ module.exports = async function main(
   const params = [inclusiveRangeStart, exclusiveRangeEnd];
   const [queryJob] = await bigQueryClient.createQueryJob({ query, params });
 
+  console.log(
+    JSON.stringify({ ImpressionsQueryJobMetadata: queryJob.metadata }),
+  );
+
   const queryMetadata = await new Promise((resolve, reject) => {
     queryJob.on('complete', resolve);
     queryJob.on('error', reject);
@@ -77,6 +81,10 @@ module.exports = async function main(
     extractJob.on('complete', resolve);
     extractJob.on('error', reject);
   });
+
+  console.log(
+    JSON.stringify({ ImpressionsExtractJobMetadata: extractJob.metadata }),
+  );
 
   await MakeCopies(
     event,

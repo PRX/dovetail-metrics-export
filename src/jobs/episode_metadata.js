@@ -25,6 +25,10 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
   `;
   const [queryJob] = await bigQueryClient.createQueryJob({ query });
 
+  console.log(
+    JSON.stringify({ EpisodeMetadataQueryJobMetadata: queryJob.metadata }),
+  );
+
   const queryMetadata = await new Promise((resolve, reject) => {
     queryJob.on('complete', resolve);
     queryJob.on('error', reject);
@@ -52,6 +56,10 @@ module.exports = async function main(event, bigQueryClient, objectPrefix) {
     extractJob.on('complete', resolve);
     extractJob.on('error', reject);
   });
+
+  console.log(
+    JSON.stringify({ EpisodeMetadataExtractJobMetadata: extractJob.metadata }),
+  );
 
   await MakeCopies(
     event,

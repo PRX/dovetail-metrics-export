@@ -21,29 +21,33 @@ module.exports = async function main(
       credentials.project_id ||
       credentials.audience.match(/projects\/([0-9]+)\/locations/)[1];
 
+    const job = {
+      Job: {
+        Id: `${bucketName}/${objectName}`,
+        Source: {
+          Mode: 'GCP/Storage',
+          ProjectId: projectId,
+          ClientConfiguration: credentials,
+          BucketName: bucketName,
+          ObjectName: objectName,
+        },
+        // Create a copy task for each copy on the input event
+        Tasks: event.Copies.map((c) => {
+          return {
+            Type: 'Copy',
+            Mode: c.Mode,
+            BucketName: c.BucketName,
+            ObjectKey: [c.DestinationPrefix, objectName].join(''),
+          };
+        }),
+      },
+    };
+
+    console.log(JSON.stringify({ PorterJob: job }));
+
     await sns
       .publish({
-        Message: JSON.stringify({
-          Job: {
-            Id: `${bucketName}/${objectName}`,
-            Source: {
-              Mode: 'GCP/Storage',
-              ProjectId: projectId,
-              ClientConfiguration: credentials,
-              BucketName: bucketName,
-              ObjectName: objectName,
-            },
-            // Create a copy task for each copy on the input event
-            Tasks: event.Copies.map((c) => {
-              return {
-                Type: 'Copy',
-                Mode: c.Mode,
-                BucketName: c.BucketName,
-                ObjectKey: [c.DestinationPrefix, objectName].join(''),
-              };
-            }),
-          },
-        }),
+        Message: JSON.stringify(job),
         TopicArn: process.env.PORTER_SNS_TOPIC,
       })
       .promise();
