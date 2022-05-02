@@ -6,18 +6,17 @@ const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
 
 /**
  * Sends Copy tasks to Porter to copy an object from Google Cloud Storage to
- * Porter-supported destinations. The destination file name will be the same as
- * the full source object name (including all prefixes).
+ * Porter-supported destinations.
  * @param {string} extractionType
  * @param {ExportConfig} config
- * @param {string} bucketName - The name of the bucket with the exported object
- * @param {string} objectName - The name of the exported object in Google Cloud Storage
+ * @param {string} sourceBucketName - The name of the bucket with the exported object
+ * @param {string} sourceObjectName - The name of the exported object in Google Cloud Storage
  */
 module.exports = async function main(
   extractionType,
   config,
-  bucketName,
-  objectName,
+  sourceBucketName,
+  sourceObjectName,
 ) {
   if (config.copies?.length) {
     const credentials = config.bigQueryClient.authClient.jsonContent;
@@ -28,23 +27,23 @@ module.exports = async function main(
 
     const job = {
       Job: {
-        Id: `${bucketName}/${objectName}`,
+        Id: `${sourceBucketName}/${sourceObjectName}`,
         Source: {
           Mode: 'GCP/Storage',
           ProjectId: projectId,
           ClientConfiguration: credentials,
-          BucketName: bucketName,
-          ObjectName: objectName,
+          BucketName: sourceBucketName,
+          ObjectName: sourceObjectName,
         },
         // Create a copy task for each copy definition on the input event
         Tasks: config.copies.map((c) => {
           // By default, the object key in the destination will exactly match
           // the object name of the source file in GCS
-          let objectKey = objectName;
+          let destinationKey = sourceObjectName;
 
           // If the copy included a custom format
           if (c.DestinationFormat) {
-            objectKey = c.DestinationFormat
+            destinationKey = c.DestinationFormat
               // Replace each format directive
               .replace(
                 /%RANGE_START_ISO/g,
@@ -59,21 +58,25 @@ module.exports = async function main(
               .replace(/%REQUEST_TIME/g, +config.requestTime);
           }
 
-          console.log(
-            JSON.stringify({
-              Copy: {
-                Source: `gs://${bucketName}/${objectName}`,
-                Destination: `s3://${c.BucketName}/${objectKey}`,
-              },
-            }),
-          );
+          if (c.mode === 'AWS/S3') {
+            console.log(
+              JSON.stringify({
+                Copy: {
+                  Source: `gs://${sourceBucketName}/${sourceObjectName}`,
+                  Destination: `s3://${c.BucketName}/${destinationKey}`,
+                },
+              }),
+            );
 
-          return {
-            Type: 'Copy',
-            Mode: c.Mode,
-            BucketName: c.BucketName,
-            ObjectKey: objectKey,
-          };
+            return {
+              Type: 'Copy',
+              Mode: c.Mode,
+              BucketName: c.BucketName,
+              ObjectKey: destinationKey,
+            };
+          } else {
+            // TODO Add more destination modes
+          }
         }),
       },
     };
