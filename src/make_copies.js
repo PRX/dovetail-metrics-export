@@ -59,6 +59,15 @@ module.exports = async function main(
               .replace(/%REQUEST_TIME/g, +config.requestTime);
           }
 
+          console.log(
+            JSON.stringify({
+              Copy: {
+                Source: `gs://${bucketName}/${objectName}`,
+                Destination: `s3://${c.BucketName}/${objectKey}`,
+              },
+            }),
+          );
+
           return {
             Type: 'Copy',
             Mode: c.Mode,
