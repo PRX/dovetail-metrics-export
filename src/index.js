@@ -74,7 +74,7 @@ exports.handler = async (event, context) => {
     return;
   }
 
-  if (!(event?.PodcastIDs?.length > 1)) {
+  if (!(event?.PodcastIDs?.length >= 1)) {
     // bad podcast IDs input
     return;
   }
