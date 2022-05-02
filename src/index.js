@@ -1,14 +1,21 @@
 const AWS = require('aws-sdk');
 const { BigQuery } = require('@google-cloud/bigquery');
 
-const ExportDownloads = require('./jobs/downloads');
-const ExportImpressions = require('./jobs/impressions');
-const ExportEpisodeMetadata = require('./jobs/episode_metadata');
-const ExportPodcastMetadata = require('./jobs/podcast_metadata');
-const ExportGeoMetadata = require('./jobs/geo_metadata');
-const ExportUserAgentMetadata = require('./jobs/user_agent_metadata');
-
 const ssm = new AWS.SSM({ apiVersion: '2014-11-06' });
+const extraction = require('./extraction');
+
+/**
+ * @typedef {object} ExportConfig
+ * @property {!BigQuery} bigQueryClient
+ * @property {!Date} inclusiveRangeStart
+ * @property {!Date} exclusiveRangeEnd
+ * @property {!number[]} podcastIds
+ * @property {!string[]} extractions
+ * @property {!string} inputPrefix
+ * @property {!string} requestId
+ * @property {!Date} requestTime
+ * @property {!object[]} [copies]
+ */
 
 /**
  * Returns the default start of the query range, which is the second-most
@@ -67,21 +74,14 @@ exports.handler = async (event, context) => {
     return;
   }
 
-  if (!event?.PodcastIDs?.length > 1) {
+  if (!(event?.PodcastIDs?.length > 1)) {
     // bad podcast IDs input
     return;
   }
 
   // Include all jobs by default
   if (!event?.Jobs || !Array.isArray(event?.Jobs)) {
-    event.Jobs = [
-      'Downloads',
-      'Impressions',
-      'PodcastMetadata',
-      'EpisodeMetadata',
-      'GeoMetadata',
-      'UserAgentMetadata',
-    ];
+    event.Jobs = extraction.types;
   }
 
   const inclusiveRangeStart = event?.Range?.[0]
@@ -97,63 +97,23 @@ exports.handler = async (event, context) => {
   // it should be separated from the automatic part of the full prefix
   const inputPrefix = event.ObjectPrefix || '';
 
-  // This object prefix is used for all files created by all exports, like:
-  // prefix/some_file_name.zip
-  const objectPrefix = [
-    inputPrefix,
-    // inputPrefix can include a trailing slash if it needs to, don't add one
-    `${inclusiveRangeStart.toISOString()}-${exclusiveRangeEnd.toISOString()}`,
-    '/',
-    +new Date(), // Make it easier to disambiguate multiple similar jobs
-    '/',
-    context.awsRequestId, // Provides a safe level of uniqueness
-    '/', // Should always end in a slash
-  ].join('');
+  /** @type {ExportConfig} */
+  const config = {
+    bigQueryClient: bigQueryClient,
+    inclusiveRangeStart: inclusiveRangeStart,
+    exclusiveRangeEnd: exclusiveRangeEnd,
+    podcastIds: event.PodcastIDs,
+    extractions: event.Jobs,
+    inputPrefix: inputPrefix,
+    requestId: context.awsRequestId,
+    requestTime: new Date(),
+    copies: event.Copies,
+  };
 
   // TODO Check to make sure the data we want to export seems complete
   const doExport = true;
 
   if (doExport) {
-    const downloads = ExportDownloads(
-      event,
-      bigQueryClient,
-      inclusiveRangeStart,
-      exclusiveRangeEnd,
-      objectPrefix,
-    );
-
-    const impressions = ExportImpressions(
-      event,
-      bigQueryClient,
-      inclusiveRangeStart,
-      exclusiveRangeEnd,
-      objectPrefix,
-    );
-
-    const podcastMetadata = ExportPodcastMetadata(
-      event,
-      bigQueryClient,
-      objectPrefix,
-    );
-    const episodeMetadata = ExportEpisodeMetadata(
-      event,
-      bigQueryClient,
-      objectPrefix,
-    );
-    const geoMetadata = ExportGeoMetadata(event, bigQueryClient, objectPrefix);
-    const userAgentMetadata = ExportUserAgentMetadata(
-      event,
-      bigQueryClient,
-      objectPrefix,
-    );
-
-    await Promise.all([
-      downloads,
-      impressions,
-      podcastMetadata,
-      episodeMetadata,
-      geoMetadata,
-      userAgentMetadata,
-    ]);
+    await Promise.all(extraction.types.map((t) => extraction.run(t, config)));
   }
 };
