@@ -74,15 +74,15 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - If included, MUST be an array.
   # - If excluded, the default is that all jobs will run.
   # - If included, it SHOULD include one or more of the following values:
-  # - Downloads
-  # - Impressions
-  # - PodcastMetadata
-  # - EpisodeMetadata
-  # - GeoMetadata
-  # - UserAgentMetadata
-  Jobs: [
-    Downloads,
-    Impressions
+  # - downloads
+  # - impressions
+  # - podcast_metadata
+  # - episode_metadata
+  # - geo_metadata
+  # - user_agent_metadata
+  Extractions: [
+    downloads,
+    impressions
   ],
   # OPTIONAL
   # - A prefix that is added to all files created in Google Cloud Storage.
