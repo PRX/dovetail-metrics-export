@@ -51,7 +51,7 @@ module.exports = async function main(jobType, config, bucketName, objectName) {
               )
               .replace(/%TYPE/g, jobType)
               .replace(/%REQUEST_ID/g, config.requestId)
-              .replace(/%REQUEST_TIME/g, config.requestTime);
+              .replace(/%REQUEST_TIME/g, +config.requestTime);
           }
 
           return {
