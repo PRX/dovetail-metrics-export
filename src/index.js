@@ -79,10 +79,11 @@ exports.handler = async (event, context) => {
     return;
   }
 
-  // Include all jobs by default
-  if (!event?.Jobs || !Array.isArray(event?.Jobs)) {
-    event.Jobs = extraction.types;
-  }
+  // Include all extraction types by default
+  const extractions =
+    !event?.Extractions || !Array.isArray(event?.Extractions)
+      ? extraction.types
+      : event.Extractions;
 
   const inclusiveRangeStart = event?.Range?.[0]
     ? new Date(Date.parse(event.Range[0]))
@@ -91,7 +92,12 @@ exports.handler = async (event, context) => {
     ? new Date(Date.parse(event.Range[1]))
     : defaultRangeEnd();
 
-  console.log(JSON.stringify({ ExportJobs: event.Jobs, Range: event.Range }));
+  console.log(
+    JSON.stringify({
+      Extractions: extractions,
+      Range: [inclusiveRangeStart, exclusiveRangeEnd],
+    }),
+  );
 
   // A prefix defined on the input, which should include a trailing slash if
   // it should be separated from the automatic part of the full prefix
@@ -103,7 +109,7 @@ exports.handler = async (event, context) => {
     inclusiveRangeStart: inclusiveRangeStart,
     exclusiveRangeEnd: exclusiveRangeEnd,
     podcastIds: event.PodcastIDs,
-    extractions: event.Jobs,
+    extractions: extractions,
     inputPrefix: inputPrefix,
     requestId: context.awsRequestId,
     requestTime: new Date(),

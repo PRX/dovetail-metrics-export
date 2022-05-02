@@ -8,12 +8,17 @@ const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
  * Sends Copy tasks to Porter to copy an object from Google Cloud Storage to
  * Porter-supported destinations. The destination file name will be the same as
  * the full source object name (including all prefixes).
- * @param {string} jobType
+ * @param {string} extractionType
  * @param {ExportConfig} config
  * @param {string} bucketName - The name of the bucket with the exported object
  * @param {string} objectName - The name of the exported object in Google Cloud Storage
  */
-module.exports = async function main(jobType, config, bucketName, objectName) {
+module.exports = async function main(
+  extractionType,
+  config,
+  bucketName,
+  objectName,
+) {
   if (config.copies?.length) {
     const credentials = config.bigQueryClient.authClient.jsonContent;
 
@@ -49,7 +54,7 @@ module.exports = async function main(jobType, config, bucketName, objectName) {
                 /%RANGE_END_ISO/g,
                 config.exclusiveRangeEnd.toISOString(),
               )
-              .replace(/%TYPE/g, jobType)
+              .replace(/%TYPE/g, extractionType)
               .replace(/%REQUEST_ID/g, config.requestId)
               .replace(/%REQUEST_TIME/g, +config.requestTime);
           }

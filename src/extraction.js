@@ -36,8 +36,13 @@ function gcsObjectPrefix(config) {
   ].join('');
 }
 
-async function queryForJobType(jobType, config) {
-  switch (jobType) {
+/**
+ *
+ * @param {string} extractionType
+ * @param {ExportConfig} config
+ */
+async function queryForExtractionType(extractionType, config) {
+  switch (extractionType) {
     case JOB_TYPES.DOWNLOADS:
       return await queryForDownloads(config);
     case JOB_TYPES.EPISODE_METADATA:
@@ -58,21 +63,21 @@ async function queryForJobType(jobType, config) {
 module.exports = {
   types: Object.values(JOB_TYPES),
   /**
-   *
-   * @param {string} jobType
+   * Runs an extraction job of a specific type for a given configuration
+   * @param {string} extractionType
    * @param {ExportConfig} config
-   * @returns
+   * @returns {Promise<void>}
    */
-  run: async function main(jobType, config) {
-    if (!config.extractions.includes(jobType)) {
+  run: async function main(extractionType, config) {
+    if (!config.extractions.includes(extractionType)) {
       return;
     }
 
-    const queryJob = await queryForJobType(jobType, config);
+    const queryJob = await queryForExtractionType(extractionType, config);
 
     console.log(
       JSON.stringify({
-        QueryJob: { Job: jobType, Metadata: queryJob.metadata },
+        QueryJob: { Type: extractionType, Metadata: queryJob.metadata },
       }),
     );
 
@@ -83,7 +88,7 @@ module.exports = {
 
     const bucketName = process.env.GCP_EXPORT_BUCKET;
 
-    const filename = `${jobType}.ndjson.gz`;
+    const filename = `${extractionType}.ndjson.gz`;
     const objectName = [gcsObjectPrefix(config), filename].join('');
 
     const [extractJob] = await config.bigQueryClient.createJob({
@@ -108,10 +113,10 @@ module.exports = {
 
     console.log(
       JSON.stringify({
-        ExtractJob: { Job: jobType, Metadata: extractJob.metadata },
+        ExtractJob: { Type: extractionType, Metadata: extractJob.metadata },
       }),
     );
 
-    await MakeCopies(jobType, config, bucketName, objectName);
+    await MakeCopies(extractionType, config, bucketName, objectName);
   },
 };
