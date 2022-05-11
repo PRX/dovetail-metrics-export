@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/PRX/dovetail-metrics-export.org#readme",
   "dependencies": {
-    "@google-cloud/bigquery": "^5.12.0",
-    "aws-sdk": "2.x"
+    "@google-cloud/bigquery": "^5.12.0"
   },
   "devDependencies": {
+    "aws-sdk": "2.x",
     "@types/aws-lambda": "*",
     "@types/node": "*",
     "eslint": "*",
