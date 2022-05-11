@@ -1,15 +1,18 @@
-FROM lambci/lambda:build-nodejs12.x
+FROM mhart/alpine-node:14
 
 LABEL maintainer="PRX <sysadmin@prx.org>"
 LABEL org.prx.lambda="true"
 
 WORKDIR /app
 
-RUN yum install -y zip
+CMD ["/bin/sh"]
+
+RUN apk add zip
 
 RUN mkdir -p /.prxci
 
 ADD package.json ./
+RUN npm install -g npm@latest
 RUN npm install --production
 ADD . .
 
