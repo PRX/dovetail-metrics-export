@@ -1,20 +1,13 @@
 {
   "name": "dovetail-metrics-export",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "engines": {
-    "node": ">= 12.0.0"
+    "node": ">= 14.19.0"
   },
   "description": "Export Dovetail metrics data",
-  "scripts": {
-    "test": "echo Done",
-    "yarn": "yarn install",
-    "build": "npm run build-sync && npm run build-prune && npm run build-zip",
-    "build-sync": "rsync -crl --delete --exclude-from .lambdaignore . build",
-    "build-prune": "cd build && yarn --production",
-    "build-zip": "rm -f build.zip && cd build && zip -rq ../build.zip ."
-  },
   "repository": "git@github.com:PRX/dovetail-metrics-export.git",
   "keywords": [
+    "bigquery",
     "lambda",
     "prx"
   ],
@@ -24,11 +17,18 @@
   },
   "homepage": "https://github.com/PRX/dovetail-metrics-export.org#readme",
   "dependencies": {
-    "@google-cloud/bigquery": "^5.12.0"
+    "@google-cloud/bigquery": "^5.12.0",
+    "aws-sdk": "2.x"
   },
   "devDependencies": {
-    "@types/node": "^17.0.31",
-    "aws-sdk": "^2.1125.0",
-    "yarn": "^1.22.18"
+    "@types/aws-lambda": "*",
+    "@types/node": "*",
+    "eslint": "*",
+    "eslint-config-airbnb-base": "*",
+    "eslint-config-prettier": "*",
+    "eslint-plugin-import": "*",
+    "eslint-plugin-prettier": "*",
+    "prettier": "*",
+    "typescript": "*"
   }
 }
