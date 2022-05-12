@@ -58,7 +58,7 @@ module.exports = async function main(
               .replace(/%REQUEST_TIME/g, +config.requestTime);
           }
 
-          if (c.mode === 'AWS/S3') {
+          if (c.Mode === 'AWS/S3') {
             console.log(
               JSON.stringify({
                 Copy: {
