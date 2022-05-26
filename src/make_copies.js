@@ -11,12 +11,14 @@ const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
  * @param {ExportConfig} config
  * @param {string} sourceBucketName - The name of the bucket with the exported object
  * @param {string} sourceObjectName - The name of the exported object in Google Cloud Storage
+ * @param {string} fileSequenceId - 000000000000, 000000000001, etc
  */
 module.exports = async function main(
   extractionType,
   config,
   sourceBucketName,
   sourceObjectName,
+  fileSequenceId,
 ) {
   if (config.copies?.length) {
     const credentials = config.bigQueryClient.authClient.jsonContent;
@@ -43,6 +45,14 @@ module.exports = async function main(
 
           // If the copy included a custom format
           if (c.DestinationFormat) {
+            // If the "%FILE_SEQ_ID" directive does not appear anywhere in the
+            // destination format, add it to the end, because it needs to
+            // appear somewhere, or all files for a query job would end up with
+            // the same S3 object key. It will be replaced later, as usual.
+            if (!c.DestinationFormat.includes('%FILE_SEQ_ID')) {
+              c.DestinationFormat = `${c.DestinationFormat}-%FILE_SEQ_ID`;
+            }
+
             destinationKey = c.DestinationFormat
               // Replace each format directive
               .replace(
@@ -55,7 +65,8 @@ module.exports = async function main(
               )
               .replace(/%TYPE/g, extractionType)
               .replace(/%REQUEST_ID/g, config.requestId)
-              .replace(/%REQUEST_TIME/g, +config.requestTime);
+              .replace(/%REQUEST_TIME/g, +config.requestTime)
+              .replace(/%FILE_SEQ_ID/g, fileSequenceId);
           }
 
           if (c.Mode === 'AWS/S3') {
