@@ -7,6 +7,7 @@ const queryForImpressions = require('./query-jobs/impressions');
 const queryForPodcastMetadata = require('./query-jobs/podcast_metadata');
 const queryForUserAgentMetadata = require('./query-jobs/user_agent_metadata');
 
+// The values should never include an "*", or output files could get real weird
 const JOB_TYPES = {
   DOWNLOADS: 'downloads',
   EPISODE_METADATA: 'episode_metadata',
@@ -88,7 +89,8 @@ module.exports = {
 
     const bucketName = process.env.GCP_EXPORT_BUCKET;
 
-    const filename = `${extractionType}.ndjson.gz`;
+    // All extract jobs use multi-file wildcard output
+    const filename = `${extractionType}-*.ndjson.gz`;
     const objectName = [gcsObjectPrefix(config), filename].join('');
 
     const [extractJob] = await config.bigQueryClient.createJob({
@@ -111,12 +113,46 @@ module.exports = {
       extractJob.on('error', reject);
     });
 
+    // destinationUriFileCounts is an array where each value corresponds to
+    // a URL provided in destinationUri in the job. We only ever give one URL,
+    // so we only get one value.
+    const outputFileCount =
+      extractJob.metadata.statistics.extract.destinationUriFileCounts[0];
+
     console.log(
       JSON.stringify({
         ExtractJob: { Type: extractionType, Metadata: extractJob.metadata },
       }),
     );
 
-    await MakeCopies(extractionType, config, bucketName, objectName);
+    const copyMachines = [];
+
+    // Because the extaction could have generated multiple files, we need to
+    // copy however many were created.
+    for (let i = 0; i < outputFileCount; i++) {
+      // BigQuery makes files with 12-digit numbers, starting at 000000000000
+      const fileSequenceId = `${i}`.padStart(12, '0');
+
+      // Replace the wildcard in the filename we gave to BigQuery in the job
+      // configuration with a 12-digit number, so it matches one of the files
+      // that was created in GCS.
+      const numberedObjectName = objectName.replace(
+        '-*.ndjson.gz',
+        `-${fileSequenceId}.ndjson.gz`,
+      );
+
+      // Copy that specific numbered file
+      copyMachines.push(
+        MakeCopies(
+          extractionType,
+          config,
+          bucketName,
+          numberedObjectName,
+          fileSequenceId,
+        ),
+      );
+    }
+
+    await Promise.all(copyMachines);
   },
 };

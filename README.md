@@ -93,21 +93,27 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - If included MUST be an array of objects.
   # - Each object contains part of a Porter Copy task input: only the Mode and
   #   BucketName.
-  # - Each file created by the export function will be copied using the given
-  #   configuration by Porter. The object name from Google Cloud Storage will
-  #   be preserved, but the DestinationPrefix will be added to the front.
-  # - Currently only supports AWS/S3 as destinations. The source is alwasy GCS.
+  # - Each copy can also include a DestinationFormat, which explicitly defines
+  #   the destination file name using placeholder directives.
+  #   Because each exctaction (downloads, impressions, etc) may result in
+  #   multiple files from BigQuery, each copy task definition may be used
+  #   multiple times.
+  #
+  # - Currently only supports AWS/S3 as destinations. The source is always GCS.
   # - DestinationFormat allows for custom-named copies using directives:
   # - %RANGE_START_ISO - e.g., 2022-05-04T00:00:00.000Z
   # - %RANGE_END_ISO - e.g., 2022-05-05T00:00:00.000Z
   # - %TYPE - e.g., downloads, episode_metadata, etc
   # - %REQUEST_ID - A unique identifier for the Lambda invocation
   # - %REQUEST_TIME - A unix timestamp in milliseconds
+  # - %FILE_SEQ_ID - This MUST appear somewhere in the custom format, or it will
+  #   be added automatically to the end, which you probably don't want, e.g.,
+  #   000000000000, 000000000001
   Copies: [
     {
       "Mode": "AWS/S3",
       "BucketName": "MyBucket",
-      "DestinationFormat": "/Acme/%TYPE/%REQUEST_ID.ndjson.gz"
+      "DestinationFormat": "/Acme/%TYPE/%REQUEST_ID-%FILE_SEQ_ID.ndjson.gz"
     }
   ]
 }
