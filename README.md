@@ -113,7 +113,7 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
     {
       "Mode": "AWS/S3",
       "BucketName": "MyBucket",
-      "DestinationFormat": "/Acme/%TYPE/%REQUEST_ID-%FILE_SEQ_ID.ndjson.gz"
+      "DestinationFormat": "Acme/%TYPE/%REQUEST_ID-%FILE_SEQ_ID.ndjson.gz"
     }
   ]
 }
