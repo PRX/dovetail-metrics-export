@@ -84,6 +84,7 @@ module.exports = async function main(
               Mode: c.Mode,
               BucketName: c.BucketName,
               ObjectKey: destinationKey,
+              ContentType: 'REPLACE',
             };
           } else {
             // TODO Add more destination modes
