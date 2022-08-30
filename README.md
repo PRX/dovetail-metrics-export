@@ -118,4 +118,3 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   ]
 }
 ```
-
