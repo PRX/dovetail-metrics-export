@@ -1,7 +1,5 @@
-const AWS = require('aws-sdk');
 const { BigQuery } = require('@google-cloud/bigquery');
 
-const ssm = new AWS.SSM({ apiVersion: '2014-11-06' });
 const extraction = require('./extraction');
 
 /**
@@ -37,14 +35,7 @@ function defaultRangeEnd() {
 exports.handler = async (event, context) => {
   console.log(JSON.stringify({ Event: event }));
 
-  // TODO Move outside handler if we end up using this a lot
-  const param = await ssm
-    .getParameter({
-      // TODO
-      Name: process.env.GCP_CLIENT_CONFIG_PARAMETER_NAME,
-    })
-    .promise();
-  const gcpConfig = JSON.parse(param.Parameter.Value);
+  const gcpConfig = JSON.parse(process.env.BIGQUERY_CLIENT_CONFIG);
 
   const bigQueryClient = new BigQuery({
     projectId:
