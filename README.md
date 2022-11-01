@@ -80,6 +80,11 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - episode_metadata
   # - geo_metadata
   # - user_agent_metadata
+  # - advertiser_metadata
+  # - campaign_metadata
+  # - creative_metadata
+  # - flight_metadata
+  # - placement_metadata
   Extractions: [
     downloads,
     impressions
