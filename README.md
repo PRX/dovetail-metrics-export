@@ -47,6 +47,11 @@ Excluding all prefixes, the resulting files in Google Cloud Storage are named:
 - episode_metadata.ndjson.gz
 - geo_metadata.ndjson.gz
 - user_agent_metadata.ndjson.gz
+- advertiser_metadata.ndjson.gz
+- campaign_metadata.ndjson.gz
+- creative_metadata.ndjson.gz
+- flight_metadata.ndjson.gz
+- placement_metadata.ndjson.gz
 
 #### Default Date Range
 
