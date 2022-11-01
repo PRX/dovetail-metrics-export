@@ -6,6 +6,11 @@ const queryForGeoMetadata = require('./query-jobs/geo_metadata');
 const queryForImpressions = require('./query-jobs/impressions');
 const queryForPodcastMetadata = require('./query-jobs/podcast_metadata');
 const queryForUserAgentMetadata = require('./query-jobs/user_agent_metadata');
+const queryForAdvertiserMetadata = require('./query-jobs/advertiser_metadata');
+const queryForCampaignMetadata = require('./query-jobs/campaign_metadata');
+const queryForCreativeMetadata = require('./query-jobs/creative_metadata');
+const queryForFlightMetadata = require('./query-jobs/flight_metadata');
+const queryForPlacementMetadata = require('./query-jobs/placement_metadata');
 
 // The values should never include an "*", or output files could get real weird
 const JOB_TYPES = {
@@ -15,6 +20,11 @@ const JOB_TYPES = {
   IMPRESSIONS: 'impressions',
   PODCAST_METADATA: 'podcast_metadata',
   USER_AGENT_METADATA: 'user_agent_metadata',
+  ADVERTISER_METADATA: 'advertiser_metadata',
+  CAMPAIGN_METADATA: 'campaign_metadata',
+  CREATIVE_METADATA: 'creative_metadata',
+  FLIGHT_METADATA: 'flight_metadata',
+  PLACEMENT_METADATA: 'placement_metadata',
 };
 
 /** @typedef {import('./index').ExportConfig} ExportConfig */
@@ -56,6 +66,16 @@ async function queryForExtractionType(extractionType, config) {
       return await queryForPodcastMetadata(config);
     case JOB_TYPES.USER_AGENT_METADATA:
       return await queryForUserAgentMetadata(config);
+    case JOB_TYPES.ADVERTISER_METADATA:
+      return await queryForAdvertiserMetadata(config);
+    case JOB_TYPES.CAMPAIGN_METADATA:
+      return await queryForCampaignMetadata(config);
+    case JOB_TYPES.CREATIVE_METADATA:
+      return await queryForCreativeMetadata(config);
+    case JOB_TYPES.FLIGHT_METADATA:
+      return await queryForFlightMetadata(config);
+    case JOB_TYPES.PLACEMENT_METADATA:
+      return await queryForPlacementMetadata(config);
     default:
       break;
   }
