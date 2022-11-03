@@ -11,9 +11,6 @@ module.exports = async function main(config) {
       advertiser_id,
       name,
       type,
-      rep_name,
-      sales_rep_name,
-      notes,
       created_at,
       updated_at
     FROM ${process.env.BIGQUERY_DATASET}.campaigns

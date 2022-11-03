@@ -10,8 +10,6 @@ module.exports = async function main(config) {
       campaign_id,
       podcast_id,
       name,
-      rep_name,
-      notes,
       status,
       start_at,
       end_at,
