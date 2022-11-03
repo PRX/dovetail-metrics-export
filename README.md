@@ -47,6 +47,11 @@ Excluding all prefixes, the resulting files in Google Cloud Storage are named:
 - episode_metadata.ndjson.gz
 - geo_metadata.ndjson.gz
 - user_agent_metadata.ndjson.gz
+- advertiser_metadata.ndjson.gz
+- campaign_metadata.ndjson.gz
+- creative_metadata.ndjson.gz
+- flight_metadata.ndjson.gz
+- placement_metadata.ndjson.gz
 
 #### Default Date Range
 
@@ -80,6 +85,11 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - episode_metadata
   # - geo_metadata
   # - user_agent_metadata
+  # - advertiser_metadata
+  # - campaign_metadata
+  # - creative_metadata
+  # - flight_metadata
+  # - placement_metadata
   Extractions: [
     downloads,
     impressions
