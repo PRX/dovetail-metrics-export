@@ -4,6 +4,22 @@
  * @param {ExportConfig} config
  */
 module.exports = async function main(config) {
+  let and_ids_in;
+  if (config.podcastIds) {
+    const ids = config.podcastIds;
+    and_ids_in = `AND feeder_podcast IN (${ids.join(', ')})`;
+  } else if (config.integrationIds) {
+    const ids = config.integrationIds;
+    and_ids_in = `AND campaigns.integration_id IN (${ids.join(', ')})`;
+  }
+
+  let join = '';
+  let addl_columns = ''; // MUST start with a comma
+  if (config.integrationIds) {
+    join = `JOIN ${process.env.BIGQUERY_DATASET}.campaigns ON campaign_id=campaigns.id`;
+    addl_columns = ', campaign.external_id';
+  }
+
   const query = `
     SELECT
       timestamp,
@@ -34,11 +50,13 @@ module.exports = async function main(config) {
       listener_id,
       city_geoname_id,
       country_geoname_id
+      ${addl_columns}
     FROM ${process.env.BIGQUERY_DATASET}.dt_impressions
+    ${join}
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
-      AND feeder_podcast IN (${config.podcastIds.join(', ')})
+      ${and_ids_in}
     `;
   const params = [config.inclusiveRangeStart, config.exclusiveRangeEnd];
   const [queryJob] = await config.bigQueryClient.createQueryJob({

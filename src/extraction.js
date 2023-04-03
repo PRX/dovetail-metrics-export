@@ -8,7 +8,7 @@ const queryForPodcastMetadata = require('./query-jobs/podcast_metadata');
 const queryForUserAgentMetadata = require('./query-jobs/user_agent_metadata');
 const queryForAdvertiserMetadata = require('./query-jobs/advertiser_metadata');
 const queryForCampaignMetadata = require('./query-jobs/campaign_metadata');
-const queryForCreativeMetadata = require('./query-jobs/creative_metadata');
+// const queryForCreativeMetadata = require('./query-jobs/creative_metadata');
 const queryForFlightMetadata = require('./query-jobs/flight_metadata');
 const queryForPlacementMetadata = require('./query-jobs/placement_metadata');
 
@@ -70,8 +70,8 @@ async function queryForExtractionType(extractionType, config) {
       return await queryForAdvertiserMetadata(config);
     case JOB_TYPES.CAMPAIGN_METADATA:
       return await queryForCampaignMetadata(config);
-    case JOB_TYPES.CREATIVE_METADATA:
-      return await queryForCreativeMetadata(config);
+    // case JOB_TYPES.CREATIVE_METADATA:
+    //   return await queryForCreativeMetadata(config);
     case JOB_TYPES.FLIGHT_METADATA:
       return await queryForFlightMetadata(config);
     case JOB_TYPES.PLACEMENT_METADATA:
@@ -110,20 +110,26 @@ module.exports = {
     const bucketName = process.env.GCP_EXPORT_BUCKET;
 
     // All extract jobs use multi-file wildcard output
-    const filename = `${extractionType}-*.ndjson.gz`;
+    const formatExt = { NEWLINE_DELIMITED_JSON: '.ndjson', CSV: '.csv' }[
+      config.destinationFormat
+    ];
+    const compressionExt = { NONE: '', GZIP: '.gz' }[config.compression];
+    const fileExtension = `${formatExt}${compressionExt}`;
+    const filename = `${extractionType}-*${fileExtension}`;
     const objectName = [gcsObjectPrefix(config), filename].join('');
 
     const [extractJob] = await config.bigQueryClient.createJob({
       configuration: {
         extract: {
+          // https://cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfigurationextract
           sourceTable: queryMetadata.configuration.query.destinationTable,
           // Ensure that the filename after the prefix does not collide with any
           // other files created by this function, or they may overwrite each
           // other
           destinationUri: `gs://${bucketName}/${objectName}`,
-          destinationFormat: 'NEWLINE_DELIMITED_JSON',
+          destinationFormat: config.destinationFormat,
           printHeader: true,
-          compression: 'GZIP',
+          compression: config.compression,
         },
       },
     });
@@ -157,8 +163,8 @@ module.exports = {
       // configuration with a 12-digit number, so it matches one of the files
       // that was created in GCS.
       const numberedObjectName = objectName.replace(
-        '-*.ndjson.gz',
-        `-${fileSequenceId}.ndjson.gz`,
+        `-*${fileExtension}`,
+        `-${fileSequenceId}${fileExtension}`,
       );
 
       // Copy that specific numbered file
