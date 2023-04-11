@@ -1,6 +1,6 @@
-const AWS = require('aws-sdk');
+const { SNS } = require("@aws-sdk/client-sns");
 
-const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
+const sns = new SNS({ apiVersion: "2010-03-31" });
 
 /** @typedef {import('./index').ExportConfig} ExportConfig */
 
