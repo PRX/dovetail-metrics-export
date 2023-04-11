@@ -1,7 +1,0 @@
-.tool-versions
-buildspec.yml
-Dockerfile
-CONTRIBUTING.md
-README.md
-tsconfig.json
-yarn.lock
