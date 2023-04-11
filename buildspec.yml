@@ -1,13 +1,11 @@
 version: 0.2
 env:
   variables:
-    # PRX_LAMBDA_CODE_CONFIG_PARAMETERS: DovetailMetricsExportCodeS3ObjectKey
-    PRX_SPIRE_S3_PKG_PARAMETERS: LAMBDA_ZIP=/prx/stag/Spire/Dovetail-Metrics_Export/pkg/s3-object-key
+    PRX_SPIRE_S3_PKG_PARAMETERS: LAMBDA_ZIP=/prx/stag/Spire/Dovetail-Metrics_Export/pkg/s3-object-key;BIGQUERY_LAYER_ZIP=/prx/stag/Spire/Dovetail-Metrics_Export/bigquery-layer/pkg/s3-object-key
   exported-variables:
-    # - PRX_LAMBDA_CODE_CONFIG_PARAMETERS
-    # - PRX_LAMBDA_CODE_CONFIG_VALUE
     - PRX_SPIRE_S3_PKG_PARAMETERS
     - LAMBDA_ZIP
+    - BIGQUERY_LAYER_ZIP
   parameter-store:
     DOCKERHUB_USERNAME: /prx/DOCKERHUB_USERNAME
     DOCKERHUB_PASSWORD: /prx/DOCKERHUB_PASSWORD
@@ -19,6 +17,7 @@ phases:
   build:
     commands:
       - docker build .
+      - docker build -f Dockerfile.bigquery .
   post_build:
     commands:
       - curl -sO "https://raw.githubusercontent.com/PRX/Infrastructure/main/ci/utility/post_build.sh"

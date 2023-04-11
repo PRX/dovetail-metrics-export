@@ -2,7 +2,7 @@
   "name": "dovetail-metrics-export",
   "version": "1.0.0",
   "engines": {
-    "node": ">= 14.19.0"
+    "node": ">= 18.0.0"
   },
   "description": "Export Dovetail metrics data",
   "repository": "git@github.com:PRX/dovetail-metrics-export.git",
