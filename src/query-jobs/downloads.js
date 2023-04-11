@@ -30,7 +30,7 @@ module.exports = async function main(config) {
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
-      AND feeder_podcast IN (${config.podcastIds.join(', ')})
+      AND feeder_podcast IN (${config.podcastIds.join(", ")})
   `;
   const params = [config.inclusiveRangeStart, config.exclusiveRangeEnd];
   const [queryJob] = await config.bigQueryClient.createQueryJob({

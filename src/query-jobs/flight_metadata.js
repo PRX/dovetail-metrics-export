@@ -27,7 +27,7 @@ module.exports = async function main(config) {
       created_at,
       updated_at
     FROM ${process.env.BIGQUERY_DATASET}.flights
-    WHERE podcast_id IN (${config.podcastIds.join(', ')})
+    WHERE podcast_id IN (${config.podcastIds.join(", ")})
   `;
   const [queryJob] = await config.bigQueryClient.createQueryJob({ query });
 

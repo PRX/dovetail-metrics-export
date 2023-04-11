@@ -1,6 +1,6 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+const { BigQuery } = require("@google-cloud/bigquery");
 
-const extraction = require('./extraction');
+const extraction = require("./extraction");
 
 /**
  * @typedef {object} ExportConfig
@@ -87,12 +87,12 @@ exports.handler = async (event, context) => {
     JSON.stringify({
       Extractions: extractions,
       Range: [inclusiveRangeStart, exclusiveRangeEnd],
-    }),
+    })
   );
 
   // A prefix defined on the input, which should include a trailing slash if
   // it should be separated from the automatic part of the full prefix
-  const inputPrefix = event.ObjectPrefix || '';
+  const inputPrefix = event.ObjectPrefix || "";
 
   /** @type {ExportConfig} */
   const config = {
