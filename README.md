@@ -89,6 +89,7 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - If included, it SHOULD include one or more of the following values:
   # - downloads
   # - impressions
+  # - boostr_impressions
   # - podcast_metadata
   # - episode_metadata
   # - geo_metadata

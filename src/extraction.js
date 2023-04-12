@@ -4,6 +4,7 @@ const queryForDownloads = require('./query-jobs/downloads');
 const queryForEpisodeMetadata = require('./query-jobs/episode_metadata');
 const queryForGeoMetadata = require('./query-jobs/geo_metadata');
 const queryForImpressions = require('./query-jobs/impressions');
+const queryForBoostrImpressions = require('./query-jobs/boostr_impressions');
 const queryForPodcastMetadata = require('./query-jobs/podcast_metadata');
 const queryForUserAgentMetadata = require('./query-jobs/user_agent_metadata');
 const queryForAdvertiserMetadata = require('./query-jobs/advertiser_metadata');
@@ -18,6 +19,7 @@ const JOB_TYPES = {
   EPISODE_METADATA: 'episode_metadata',
   GEO_METADATA: 'geo_metadata',
   IMPRESSIONS: 'impressions',
+  BOOSTR_IMPRESSIONS: 'boostr_impressions',
   PODCAST_METADATA: 'podcast_metadata',
   USER_AGENT_METADATA: 'user_agent_metadata',
   ADVERTISER_METADATA: 'advertiser_metadata',
@@ -62,6 +64,8 @@ async function queryForExtractionType(extractionType, config) {
       return await queryForGeoMetadata(config);
     case JOB_TYPES.IMPRESSIONS:
       return await queryForImpressions(config);
+    case JOB_TYPES.BOOSTR_IMPRESSIONS:
+      return await queryForBoostrImpressions(config);
     case JOB_TYPES.PODCAST_METADATA:
       return await queryForPodcastMetadata(config);
     case JOB_TYPES.USER_AGENT_METADATA:
