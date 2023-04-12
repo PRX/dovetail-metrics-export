@@ -1,6 +1,6 @@
-const AWS = require('aws-sdk');
+const AWS = require("aws-sdk");
 
-const sns = new AWS.SNS({ apiVersion: '2010-03-31' });
+const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
 
 /** @typedef {import('./index').ExportConfig} ExportConfig */
 
@@ -18,7 +18,7 @@ module.exports = async function main(
   config,
   sourceBucketName,
   sourceObjectName,
-  fileSequenceId,
+  fileSequenceId
 ) {
   if (config.copies?.length) {
     const credentials = config.bigQueryClient.authClient.jsonContent;
@@ -31,7 +31,7 @@ module.exports = async function main(
       Job: {
         Id: `${sourceBucketName}/${sourceObjectName}`,
         Source: {
-          Mode: 'GCP/Storage',
+          Mode: "GCP/Storage",
           ProjectId: projectId,
           ClientConfiguration: credentials,
           BucketName: sourceBucketName,
@@ -49,7 +49,7 @@ module.exports = async function main(
             // destination format, add it to the end, because it needs to
             // appear somewhere, or all files for a query job would end up with
             // the same S3 object key. It will be replaced later, as usual.
-            if (!c.DestinationFormat.includes('%FILE_SEQ_ID')) {
+            if (!c.DestinationFormat.includes("%FILE_SEQ_ID")) {
               c.DestinationFormat = `${c.DestinationFormat}-%FILE_SEQ_ID`;
             }
 
@@ -57,11 +57,11 @@ module.exports = async function main(
               // Replace each format directive
               .replace(
                 /%RANGE_START_ISO/g,
-                config.inclusiveRangeStart.toISOString(),
+                config.inclusiveRangeStart.toISOString()
               )
               .replace(
                 /%RANGE_END_ISO/g,
-                config.exclusiveRangeEnd.toISOString(),
+                config.exclusiveRangeEnd.toISOString()
               )
               .replace(/%TYPE/g, extractionType)
               .replace(/%REQUEST_ID/g, config.requestId)
@@ -69,22 +69,22 @@ module.exports = async function main(
               .replace(/%FILE_SEQ_ID/g, fileSequenceId);
           }
 
-          if (c.Mode === 'AWS/S3') {
+          if (c.Mode === "AWS/S3") {
             console.log(
               JSON.stringify({
                 Copy: {
                   Source: `gs://${sourceBucketName}/${sourceObjectName}`,
                   Destination: `s3://${c.BucketName}/${destinationKey}`,
                 },
-              }),
+              })
             );
 
             return {
-              Type: 'Copy',
+              Type: "Copy",
               Mode: c.Mode,
               BucketName: c.BucketName,
               ObjectKey: destinationKey,
-              ContentType: 'REPLACE',
+              ContentType: "REPLACE",
             };
           } else {
             // TODO Add more destination modes

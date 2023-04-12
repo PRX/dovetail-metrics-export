@@ -1,6 +1,6 @@
-const { BigQuery } = require('@google-cloud/bigquery');
+const { BigQuery } = require("@google-cloud/bigquery");
 
-const extraction = require('./extraction');
+const extraction = require("./extraction");
 
 /**
  * @typedef {object} ExportConfig
@@ -81,26 +81,26 @@ exports.handler = async (event, context) => {
   let destinationFormat = event.DestinationFormat;
   if (
     event.DestinationFormat &&
-    !['NEWLINE_DELIMITED_JSON', 'CSV'].includes(event.DestinationFormat)
+    !["NEWLINE_DELIMITED_JSON", "CSV"].includes(event.DestinationFormat)
   ) {
     // bad format
     return;
   } else if (!event.DestinationFormat) {
     // use default format
-    destinationFormat = 'NEWLINE_DELIMITED_JSON';
+    destinationFormat = "NEWLINE_DELIMITED_JSON";
   }
 
   // Check compression type
   let compression = event.CompressionType;
   if (
     event.CompressionType &&
-    !['NONE', 'GZIP'].includes(event.CompressionType)
+    !["NONE", "GZIP"].includes(event.CompressionType)
   ) {
     // bad compression type
     return;
   } else if (!event.DestinationFormat) {
     // use default compression
-    compression = 'GZIP';
+    compression = "GZIP";
   }
 
   // Include all extraction types by default
@@ -120,12 +120,12 @@ exports.handler = async (event, context) => {
     JSON.stringify({
       Extractions: extractions,
       Range: [inclusiveRangeStart, exclusiveRangeEnd],
-    }),
+    })
   );
 
   // A prefix defined on the input, which should include a trailing slash if
   // it should be separated from the automatic part of the full prefix
-  const inputPrefix = event.ObjectPrefix || '';
+  const inputPrefix = event.ObjectPrefix || "";
 
   /** @type {ExportConfig} */
   const config = {
