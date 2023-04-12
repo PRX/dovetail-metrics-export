@@ -1,6 +1,6 @@
-const AWS = require("aws-sdk");
+const { SNS } = require("@aws-sdk/client-sns");
 
-const sns = new AWS.SNS({ apiVersion: "2010-03-31" });
+const sns = new SNS({ apiVersion: "2010-03-31" });
 
 /** @typedef {import('./index').ExportConfig} ExportConfig */
 
@@ -24,7 +24,9 @@ module.exports = async function main(
     const credentials = config.bigQueryClient.authClient.jsonContent;
 
     const projectId =
+      // @ts-ignore
       credentials.project_id ||
+      // @ts-ignore
       credentials.audience.match(/projects\/([0-9]+)\/locations/)[1];
 
     const job = {
@@ -95,11 +97,9 @@ module.exports = async function main(
 
     console.log(JSON.stringify({ PorterJob: job }));
 
-    await sns
-      .publish({
-        Message: JSON.stringify(job),
-        TopicArn: process.env.PORTER_SNS_TOPIC,
-      })
-      .promise();
+    await sns.publish({
+      Message: JSON.stringify(job),
+      TopicArn: process.env.PORTER_SNS_TOPIC,
+    });
   }
 };
