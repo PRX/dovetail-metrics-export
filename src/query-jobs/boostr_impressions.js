@@ -14,6 +14,7 @@ module.exports = async function main(config) {
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
+      AND creative_id IS NOT NULL
       AND integration_id IN (${config.integrationIds.join(", ")})
     GROUP BY Date, \`Ad Server Line\`
     ORDER BY Date ASC, \`Ad Server Line\` ASC
