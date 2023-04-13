@@ -9,8 +9,8 @@ module.exports = async function main(config) {
       timestamp_trunc(timestamp, day) AS Date,
       external_id AS \`Ad Server Line\`,
       count(*) AS Impressions
-    FROM staging.dt_impressions
-    INNER JOIN staging.flights ON (flight_id = id)
+    FROM ${process.env.BIGQUERY_DATASET}.dt_impressions
+    INNER JOIN ${process.env.BIGQUERY_DATASET}.flights ON (flight_id = id)
     WHERE timestamp >= ?
       AND timestamp < ?
       AND is_duplicate = false
