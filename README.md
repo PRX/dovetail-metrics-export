@@ -37,7 +37,7 @@ The identity provider attribute condition should look something like:
 
 ### Output Files
 
-All files are currently formatted as newline-delimited JSON and compressed with GZIP.
+All files are currently formatted as newline-delimited JSON and compressed with GZIP by default. Other formats can be configured.
 
 Excluding all prefixes, the resulting files in Google Cloud Storage are named:
 
@@ -53,6 +53,8 @@ Excluding all prefixes, the resulting files in Google Cloud Storage are named:
 - flight_metadata.ndjson.gz
 - placement_metadata.ndjson.gz
 
+Possible file extensions are: `.ndjson`, `.ndjson.gz`, `.csv`, `.csv.gz`.
+
 #### Default Date Range
 
 If the `Range` property is excluded from the input, the default range will start (inclusive) at midnight yesterday (UTC) and end (exclusive) at midnight today (UTC).
@@ -61,10 +63,16 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
 
 ```yaml
 {
-  # REQUIRED
+  # CONDITIONAL
+  # - Either PodcastIDs or IntegrationsIDs MUST be included, but not both.
   # - MUST be an array.
-  # - Podcast IDs in Big Query are always numbers.
+  # - Podcast IDs in BigQuery are always numbers.
   PodcastIDs: [1, 2, 3],
+  # CONDITIONAL
+  # - Either PodcastIDs or IntegrationsIDs MUST be included, but not both.
+  # - MUST be an array.
+  # - Integrations IDs in BigQuery are always numbers.
+  IntegrationsIDs: [1, 2, 3],
   # OPTIONAL
   # - If included, the range MUST contain exactly two strings.
   # - If excluded, see above for defaults.
@@ -81,6 +89,7 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - If included, it SHOULD include one or more of the following values:
   # - downloads
   # - impressions
+  # - boostr_impressions
   # - podcast_metadata
   # - episode_metadata
   # - geo_metadata
@@ -125,6 +134,14 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
       "BucketName": "MyBucket",
       "DestinationFormat": "Acme/%TYPE/%REQUEST_ID-%FILE_SEQ_ID.ndjson.gz"
     }
-  ]
+  ],
+  # OPTIONAL
+  # - NEWLINE_DELIMITED_JSON (default)
+  # - CSV
+  DestinationFormat: "NEWLINE_DELIMITED_JSON",
+  # OPTIONAL
+  # - GZIP (default)
+  # - NONE
+  CompressionType: "GZIP"
 }
 ```
