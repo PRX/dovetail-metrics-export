@@ -106,7 +106,7 @@ exports.handler = async (event, context) => {
   // Include all extraction types by default
   const extractions =
     !event.Extractions || !Array.isArray(event.Extractions)
-      ? extraction.types
+      ? extraction.types.filter((t) => !["boostr_impressions"].includes(t))
       : event.Extractions;
 
   const inclusiveRangeStart = event.Range?.[0]
