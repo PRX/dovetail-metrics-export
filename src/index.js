@@ -19,20 +19,20 @@ const extraction = require("./extraction");
  */
 
 /**
+ * Returns the default end of the query range, which is the most recent UTC
+ * midnight relative to the present time
+ */
+function defaultRangeEnd() {
+  return new Date(new Date().setUTCHours(0, 0, 0, 0));
+}
+
+/**
  * Returns the default start of the query range, which is the second-most
  * recent UTC midnight relative to the present time
  */
 function defaultRangeStart() {
   const d = defaultRangeEnd();
   return new Date(d.setDate(d.getDate() - 1));
-}
-
-/**
- * Returns the default end of the query range, which is the most recent UTC
- * midnight relative to the present time
- */
-function defaultRangeEnd() {
-  return new Date(new Date().setUTCHours(0, 0, 0, 0));
 }
 
 exports.handler = async (event, context) => {
@@ -129,18 +129,18 @@ exports.handler = async (event, context) => {
 
   /** @type {ExportConfig} */
   const config = {
-    bigQueryClient: bigQueryClient,
-    inclusiveRangeStart: inclusiveRangeStart,
-    exclusiveRangeEnd: exclusiveRangeEnd,
+    bigQueryClient,
+    inclusiveRangeStart,
+    exclusiveRangeEnd,
     ...(event.PodcastIDs && { podcastIds: event.PodcastIDs }),
     ...(event.IntegrationsIDs && { integrationIds: event.IntegrationsIDs }),
-    extractions: extractions,
-    inputPrefix: inputPrefix,
+    extractions,
+    inputPrefix,
     requestId: context.awsRequestId,
     requestTime: new Date(),
     copies: event.Copies,
-    destinationFormat: destinationFormat,
-    compression: compression,
+    destinationFormat,
+    compression,
   };
 
   // TODO Check to make sure the data we want to export seems complete

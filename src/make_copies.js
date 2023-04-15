@@ -52,6 +52,7 @@ module.exports = async function main(
             // appear somewhere, or all files for a query job would end up with
             // the same S3 object key. It will be replaced later, as usual.
             if (!c.DestinationFormat.includes("%FILE_SEQ_ID")) {
+              // eslint-disable-next-line no-param-reassign
               c.DestinationFormat = `${c.DestinationFormat}-%FILE_SEQ_ID`;
             }
 
@@ -89,6 +90,7 @@ module.exports = async function main(
               ContentType: "REPLACE",
             };
           } else {
+            throw new Error("Unknown mode");
             // TODO Add more destination modes
           }
         }),

@@ -57,31 +57,31 @@ function gcsObjectPrefix(config) {
 async function queryForExtractionType(extractionType, config) {
   switch (extractionType) {
     case JOB_TYPES.DOWNLOADS:
-      return await queryForDownloads(config);
+      return queryForDownloads(config);
     case JOB_TYPES.EPISODE_METADATA:
-      return await queryForEpisodeMetadata(config);
+      return queryForEpisodeMetadata(config);
     case JOB_TYPES.GEO_METADATA:
-      return await queryForGeoMetadata(config);
+      return queryForGeoMetadata(config);
     case JOB_TYPES.IMPRESSIONS:
-      return await queryForImpressions(config);
+      return queryForImpressions(config);
     case JOB_TYPES.BOOSTR_IMPRESSIONS:
-      return await queryForBoostrImpressions(config);
+      return queryForBoostrImpressions(config);
     case JOB_TYPES.PODCAST_METADATA:
-      return await queryForPodcastMetadata(config);
+      return queryForPodcastMetadata(config);
     case JOB_TYPES.USER_AGENT_METADATA:
-      return await queryForUserAgentMetadata(config);
+      return queryForUserAgentMetadata(config);
     case JOB_TYPES.ADVERTISER_METADATA:
-      return await queryForAdvertiserMetadata(config);
+      return queryForAdvertiserMetadata(config);
     case JOB_TYPES.CAMPAIGN_METADATA:
-      return await queryForCampaignMetadata(config);
+      return queryForCampaignMetadata(config);
     // case JOB_TYPES.CREATIVE_METADATA:
-    //   return await queryForCreativeMetadata(config);
+    //   return queryForCreativeMetadata(config);
     case JOB_TYPES.FLIGHT_METADATA:
-      return await queryForFlightMetadata(config);
+      return queryForFlightMetadata(config);
     case JOB_TYPES.PLACEMENT_METADATA:
-      return await queryForPlacementMetadata(config);
+      return queryForPlacementMetadata(config);
     default:
-      break;
+      return false;
   }
 }
 
@@ -100,6 +100,10 @@ module.exports = {
     }
 
     const queryJob = await queryForExtractionType(extractionType, config);
+
+    if (!queryJob) {
+      return;
+    }
 
     console.log(
       JSON.stringify({
@@ -160,7 +164,7 @@ module.exports = {
 
     // Because the extaction could have generated multiple files, we need to
     // copy however many were created.
-    for (let i = 0; i < outputFileCount; i++) {
+    for (let i = 0; i < outputFileCount; i += 1) {
       // BigQuery makes files with 12-digit numbers, starting at 000000000000
       const fileSequenceId = `${i}`.padStart(12, "0");
 
