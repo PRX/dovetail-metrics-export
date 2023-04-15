@@ -24,7 +24,7 @@ const JOB_TYPES = {
   USER_AGENT_METADATA: "user_agent_metadata",
   ADVERTISER_METADATA: "advertiser_metadata",
   CAMPAIGN_METADATA: "campaign_metadata",
-  CREATIVE_METADATA: "creative_metadata",
+  // CREATIVE_METADATA: "creative_metadata",
   FLIGHT_METADATA: "flight_metadata",
   PLACEMENT_METADATA: "placement_metadata",
 };
@@ -94,6 +94,7 @@ module.exports = {
    * @returns {Promise<void>}
    */
   run: async function main(extractionType, config) {
+    console.log(extractionType);
     if (!config.extractions.includes(extractionType)) {
       return;
     }
