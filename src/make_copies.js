@@ -1,6 +1,9 @@
 const { SNS } = require("@aws-sdk/client-sns");
 
-const sns = new SNS({ apiVersion: "2010-03-31" });
+const sns = new SNS({
+  apiVersion: "2010-03-31",
+  region: process.env.PORTER_SNS_TOPIC.split(":")[3],
+});
 
 /** @typedef {import('./index').ExportConfig} ExportConfig */
 
