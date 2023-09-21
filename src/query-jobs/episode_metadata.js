@@ -8,6 +8,7 @@ module.exports = async function main(config) {
     SELECT
       id,
       podcast_id,
+      guid,
       title,
       subtitle,
       image_url,
