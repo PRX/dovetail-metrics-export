@@ -66,8 +66,16 @@ module.exports = async function main(
                 config.inclusiveRangeStart.toISOString()
               )
               .replace(
+                /%RANGE_START_DATE_ISO/g,
+                config.inclusiveRangeStart.toISOString().split("T")[0]
+              )
+              .replace(
                 /%RANGE_END_ISO/g,
                 config.exclusiveRangeEnd.toISOString()
+              )
+              .replace(
+                /%RANGE_END_DATE_ISO/g,
+                config.exclusiveRangeEnd.toISOString().split("T")[0]
               )
               .replace(/%TYPE/g, extractionType)
               .replace(/%REQUEST_ID/g, config.requestId)
