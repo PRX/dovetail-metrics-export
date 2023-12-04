@@ -6,7 +6,7 @@
 module.exports = async function main(config) {
   const query = `
     SELECT
-      timestamp_trunc(timestamp, day) AS Date,
+      FORMAT_TIMESTAMP("%m/%d/%Y", timestamp) as Date,
       external_id AS \`Ad Server Line\`,
       count(*) AS Impressions
     FROM ${process.env.BIGQUERY_DATASET}.dt_impressions
