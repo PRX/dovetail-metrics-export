@@ -122,6 +122,8 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - DestinationFormat allows for custom-named copies using directives:
   # - %RANGE_START_ISO - e.g., 2022-05-04T00:00:00.000Z
   # - %RANGE_END_ISO - e.g., 2022-05-05T00:00:00.000Z
+  # - %RANGE_START_DATE_ISO - e.g., 2022-05-04
+  # - %RANGE_END_DATE_ISO - e.g., 2022-05-05
   # - %TYPE - e.g., downloads, episode_metadata, etc
   # - %REQUEST_ID - A unique identifier for the Lambda invocation
   # - %REQUEST_TIME - A unix timestamp in milliseconds
