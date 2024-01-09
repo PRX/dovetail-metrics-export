@@ -21,7 +21,7 @@ export default async function makeCopies(
   config,
   sourceBucketName,
   sourceObjectName,
-  fileSequenceId
+  fileSequenceId,
 ) {
   if (config.copies?.length) {
     const credentials = config.bigQueryClient.authClient.jsonContent;
@@ -63,19 +63,19 @@ export default async function makeCopies(
               // Replace each format directive
               .replace(
                 /%RANGE_START_ISO/g,
-                config.inclusiveRangeStart.toISOString()
+                config.inclusiveRangeStart.toISOString(),
               )
               .replace(
                 /%RANGE_START_DATE_ISO/g,
-                config.inclusiveRangeStart.toISOString().split("T")[0]
+                config.inclusiveRangeStart.toISOString().split("T")[0],
               )
               .replace(
                 /%RANGE_END_ISO/g,
-                config.exclusiveRangeEnd.toISOString()
+                config.exclusiveRangeEnd.toISOString(),
               )
               .replace(
                 /%RANGE_END_DATE_ISO/g,
-                config.exclusiveRangeEnd.toISOString().split("T")[0]
+                config.exclusiveRangeEnd.toISOString().split("T")[0],
               )
               .replace(/%TYPE/g, extractionType)
               .replace(/%REQUEST_ID/g, config.requestId)
@@ -90,7 +90,7 @@ export default async function makeCopies(
                   Source: `gs://${sourceBucketName}/${sourceObjectName}`,
                   Destination: `s3://${c.BucketName}/${destinationKey}`,
                 },
-              })
+              }),
             );
 
             return {
@@ -114,7 +114,7 @@ export default async function makeCopies(
       new PublishCommand({
         Message: JSON.stringify(job),
         TopicArn: process.env.PORTER_SNS_TOPIC,
-      })
+      }),
     );
   }
 }

@@ -108,7 +108,7 @@ export async function run(extractionType, config) {
   console.log(
     JSON.stringify({
       QueryJob: { Type: extractionType, Metadata: queryJob.metadata },
-    })
+    }),
   );
 
   const queryMetadata = await new Promise((resolve, reject) => {
@@ -157,7 +157,7 @@ export async function run(extractionType, config) {
   console.log(
     JSON.stringify({
       ExtractJob: { Type: extractionType, Metadata: extractJob.metadata },
-    })
+    }),
   );
 
   const copyMachines = [];
@@ -173,7 +173,7 @@ export async function run(extractionType, config) {
     // that was created in GCS.
     const numberedObjectName = objectName.replace(
       `-*${fileExtension}`,
-      `-${fileSequenceId}${fileExtension}`
+      `-${fileSequenceId}${fileExtension}`,
     );
 
     // Copy that specific numbered file
@@ -183,8 +183,8 @@ export async function run(extractionType, config) {
         config,
         bucketName,
         numberedObjectName,
-        fileSequenceId
-      )
+        fileSequenceId,
+      ),
     );
   }
 

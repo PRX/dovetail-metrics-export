@@ -119,7 +119,7 @@ export const handler = async (event, context) => {
     JSON.stringify({
       Extractions: extractions,
       Range: [inclusiveRangeStart, exclusiveRangeEnd],
-    })
+    }),
   );
 
   // A prefix defined on the input, which should include a trailing slash if
