@@ -3,7 +3,7 @@
 /**
  * @param {ExportConfig} config
  */
-module.exports = async function main(config) {
+export default async function job(config) {
   const query = `
     SELECT
       id,
@@ -22,4 +22,4 @@ module.exports = async function main(config) {
   const [queryJob] = await config.bigQueryClient.createQueryJob({ query });
 
   return queryJob;
-};
+}

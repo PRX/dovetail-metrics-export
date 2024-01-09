@@ -1,17 +1,17 @@
-const MakeCopies = require("./make_copies");
+import MakeCopies from "./make_copies";
 
-const queryForDownloads = require("./query-jobs/downloads");
-const queryForEpisodeMetadata = require("./query-jobs/episode_metadata");
-const queryForGeoMetadata = require("./query-jobs/geo_metadata");
-const queryForImpressions = require("./query-jobs/impressions");
-const queryForBoostrImpressions = require("./query-jobs/boostr_impressions");
-const queryForPodcastMetadata = require("./query-jobs/podcast_metadata");
-const queryForUserAgentMetadata = require("./query-jobs/user_agent_metadata");
-const queryForAdvertiserMetadata = require("./query-jobs/advertiser_metadata");
-const queryForCampaignMetadata = require("./query-jobs/campaign_metadata");
-// const queryForCreativeMetadata = require('./query-jobs/creative_metadata');
-const queryForFlightMetadata = require("./query-jobs/flight_metadata");
-const queryForPlacementMetadata = require("./query-jobs/placement_metadata");
+import queryForDownloads from "./query-jobs/downloads";
+import queryForEpisodeMetadata from "./query-jobs/episode_metadata";
+import queryForGeoMetadata from "./query-jobs/geo_metadata";
+import queryForImpressions from "./query-jobs/impressions";
+import queryForBoostrImpressions from "./query-jobs/boostr_impressions";
+import queryForPodcastMetadata from "./query-jobs/podcast_metadata";
+import queryForUserAgentMetadata from "./query-jobs/user_agent_metadata";
+import queryForAdvertiserMetadata from "./query-jobs/advertiser_metadata";
+import queryForCampaignMetadata from "./query-jobs/campaign_metadata";
+// import queryForCreativeMetadata from './query-jobs/creative_metadata';
+import queryForFlightMetadata from "./query-jobs/flight_metadata";
+import queryForPlacementMetadata from "./query-jobs/placement_metadata";
 
 // The values should never include an "*", or output files could get real weird
 const JOB_TYPES = {
@@ -85,109 +85,108 @@ async function queryForExtractionType(extractionType, config) {
   }
 }
 
-module.exports = {
-  types: Object.values(JOB_TYPES),
-  /**
-   * Runs an extraction job of a specific type for a given configuration
-   * @param {string} extractionType
-   * @param {ExportConfig} config
-   * @returns {Promise<void>}
-   */
-  run: async function main(extractionType, config) {
-    console.log(extractionType);
-    if (!config.extractions.includes(extractionType)) {
-      return;
-    }
+export const types = Object.values(JOB_TYPES);
 
-    const queryJob = await queryForExtractionType(extractionType, config);
+/**
+ * Runs an extraction job of a specific type for a given configuration
+ * @param {string} extractionType
+ * @param {ExportConfig} config
+ * @returns {Promise<void>}
+ */
+export async function run(extractionType, config) {
+  console.log(extractionType);
+  if (!config.extractions.includes(extractionType)) {
+    return;
+  }
 
-    if (!queryJob) {
-      return;
-    }
+  const queryJob = await queryForExtractionType(extractionType, config);
 
-    console.log(
-      JSON.stringify({
-        QueryJob: { Type: extractionType, Metadata: queryJob.metadata },
-      })
-    );
+  if (!queryJob) {
+    return;
+  }
 
-    const queryMetadata = await new Promise((resolve, reject) => {
-      queryJob.on("complete", resolve);
-      queryJob.on("error", reject);
-    });
+  console.log(
+    JSON.stringify({
+      QueryJob: { Type: extractionType, Metadata: queryJob.metadata },
+    })
+  );
 
-    const bucketName = process.env.GCP_EXPORT_BUCKET;
+  const queryMetadata = await new Promise((resolve, reject) => {
+    queryJob.on("complete", resolve);
+    queryJob.on("error", reject);
+  });
 
-    // All extract jobs use multi-file wildcard output
-    const formatExt = { NEWLINE_DELIMITED_JSON: ".ndjson", CSV: ".csv" }[
-      config.destinationFormat
-    ];
-    const compressionExt = { NONE: "", GZIP: ".gz" }[config.compression];
-    const fileExtension = `${formatExt}${compressionExt}`;
-    const filename = `${extractionType}-*${fileExtension}`;
-    const objectName = [gcsObjectPrefix(config), filename].join("");
+  const bucketName = process.env.GCP_EXPORT_BUCKET;
 
-    const [extractJob] = await config.bigQueryClient.createJob({
-      configuration: {
-        extract: {
-          // https://cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfigurationextract
-          sourceTable: queryMetadata.configuration.query.destinationTable,
-          // Ensure that the filename after the prefix does not collide with any
-          // other files created by this function, or they may overwrite each
-          // other
-          destinationUri: `gs://${bucketName}/${objectName}`,
-          destinationFormat: config.destinationFormat,
-          printHeader: true,
-          compression: config.compression,
-        },
+  // All extract jobs use multi-file wildcard output
+  const formatExt = { NEWLINE_DELIMITED_JSON: ".ndjson", CSV: ".csv" }[
+    config.destinationFormat
+  ];
+  const compressionExt = { NONE: "", GZIP: ".gz" }[config.compression];
+  const fileExtension = `${formatExt}${compressionExt}`;
+  const filename = `${extractionType}-*${fileExtension}`;
+  const objectName = [gcsObjectPrefix(config), filename].join("");
+
+  const [extractJob] = await config.bigQueryClient.createJob({
+    configuration: {
+      extract: {
+        // https://cloud.google.com/bigquery/docs/reference/rest/v2/Job#jobconfigurationextract
+        sourceTable: queryMetadata.configuration.query.destinationTable,
+        // Ensure that the filename after the prefix does not collide with any
+        // other files created by this function, or they may overwrite each
+        // other
+        destinationUri: `gs://${bucketName}/${objectName}`,
+        destinationFormat: config.destinationFormat,
+        printHeader: true,
+        compression: config.compression,
       },
-    });
+    },
+  });
 
-    await new Promise((resolve, reject) => {
-      extractJob.on("complete", resolve);
-      extractJob.on("error", reject);
-    });
+  await new Promise((resolve, reject) => {
+    extractJob.on("complete", resolve);
+    extractJob.on("error", reject);
+  });
 
-    // destinationUriFileCounts is an array where each value corresponds to
-    // a URL provided in destinationUri in the job. We only ever give one URL,
-    // so we only get one value.
-    const outputFileCount =
-      extractJob.metadata.statistics.extract.destinationUriFileCounts[0];
+  // destinationUriFileCounts is an array where each value corresponds to
+  // a URL provided in destinationUri in the job. We only ever give one URL,
+  // so we only get one value.
+  const outputFileCount =
+    extractJob.metadata.statistics.extract.destinationUriFileCounts[0];
 
-    console.log(
-      JSON.stringify({
-        ExtractJob: { Type: extractionType, Metadata: extractJob.metadata },
-      })
+  console.log(
+    JSON.stringify({
+      ExtractJob: { Type: extractionType, Metadata: extractJob.metadata },
+    })
+  );
+
+  const copyMachines = [];
+
+  // Because the extaction could have generated multiple files, we need to
+  // copy however many were created.
+  for (let i = 0; i < outputFileCount; i += 1) {
+    // BigQuery makes files with 12-digit numbers, starting at 000000000000
+    const fileSequenceId = `${i}`.padStart(12, "0");
+
+    // Replace the wildcard in the filename we gave to BigQuery in the job
+    // configuration with a 12-digit number, so it matches one of the files
+    // that was created in GCS.
+    const numberedObjectName = objectName.replace(
+      `-*${fileExtension}`,
+      `-${fileSequenceId}${fileExtension}`
     );
 
-    const copyMachines = [];
+    // Copy that specific numbered file
+    copyMachines.push(
+      MakeCopies(
+        extractionType,
+        config,
+        bucketName,
+        numberedObjectName,
+        fileSequenceId
+      )
+    );
+  }
 
-    // Because the extaction could have generated multiple files, we need to
-    // copy however many were created.
-    for (let i = 0; i < outputFileCount; i += 1) {
-      // BigQuery makes files with 12-digit numbers, starting at 000000000000
-      const fileSequenceId = `${i}`.padStart(12, "0");
-
-      // Replace the wildcard in the filename we gave to BigQuery in the job
-      // configuration with a 12-digit number, so it matches one of the files
-      // that was created in GCS.
-      const numberedObjectName = objectName.replace(
-        `-*${fileExtension}`,
-        `-${fileSequenceId}${fileExtension}`
-      );
-
-      // Copy that specific numbered file
-      copyMachines.push(
-        MakeCopies(
-          extractionType,
-          config,
-          bucketName,
-          numberedObjectName,
-          fileSequenceId
-        )
-      );
-    }
-
-    await Promise.all(copyMachines);
-  },
-};
+  await Promise.all(copyMachines);
+}

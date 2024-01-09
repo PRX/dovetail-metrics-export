@@ -1,6 +1,5 @@
-const { BigQuery } = require("@google-cloud/bigquery");
-
-const extraction = require("./extraction");
+import { BigQuery } from "@google-cloud/bigquery";
+import { types, run } from "./extraction";
 
 /**
  * @typedef {object} ExportConfig
@@ -35,7 +34,7 @@ function defaultRangeStart() {
   return new Date(d.setDate(d.getDate() - 1));
 }
 
-exports.handler = async (event, context) => {
+export const handler = async (event, context) => {
   console.log(JSON.stringify({ Event: event }));
 
   const gcpConfig = JSON.parse(process.env.BIGQUERY_CLIENT_CONFIG);
@@ -106,7 +105,7 @@ exports.handler = async (event, context) => {
   // Include all extraction types by default
   const extractions =
     !event.Extractions || !Array.isArray(event.Extractions)
-      ? extraction.types.filter((t) => !["boostr_impressions"].includes(t))
+      ? types.filter((t) => !["boostr_impressions"].includes(t))
       : event.Extractions;
 
   const inclusiveRangeStart = event.Range?.[0]
@@ -147,6 +146,6 @@ exports.handler = async (event, context) => {
   const doExport = true;
 
   if (doExport) {
-    await Promise.all(extraction.types.map((t) => extraction.run(t, config)));
+    await Promise.all(types.map((t) => run(t, config)));
   }
 };

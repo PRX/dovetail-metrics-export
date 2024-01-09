@@ -1,6 +1,6 @@
-const { SNS } = require("@aws-sdk/client-sns");
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
-const sns = new SNS({
+const sns = new SNSClient({
   apiVersion: "2010-03-31",
   region: process.env.PORTER_SNS_TOPIC.split(":")[3],
 });
@@ -16,7 +16,7 @@ const sns = new SNS({
  * @param {string} sourceObjectName - The name of the exported object in Google Cloud Storage
  * @param {string} fileSequenceId - 000000000000, 000000000001, etc
  */
-module.exports = async function main(
+export default async function makeCopies(
   extractionType,
   config,
   sourceBucketName,
@@ -102,9 +102,11 @@ module.exports = async function main(
 
     console.log(JSON.stringify({ PorterJob: job }));
 
-    await sns.publish({
-      Message: JSON.stringify(job),
-      TopicArn: process.env.PORTER_SNS_TOPIC,
-    });
+    await sns.send(
+      new PublishCommand({
+        Message: JSON.stringify(job),
+        TopicArn: process.env.PORTER_SNS_TOPIC,
+      })
+    );
   }
-};
+}
