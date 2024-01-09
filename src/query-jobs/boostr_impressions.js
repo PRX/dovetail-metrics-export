@@ -6,7 +6,7 @@
 export default async function job(config) {
   const query = `
     SELECT
-      timestamp_trunc(timestamp, day) AS Date,
+      FORMAT_TIMESTAMP("%m/%d/%Y", timestamp) AS Date,
       external_id AS \`Ad Server Line\`,
       count(*) AS Impressions
     FROM ${process.env.BIGQUERY_DATASET}.dt_impressions
