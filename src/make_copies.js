@@ -1,6 +1,6 @@
-const { SNS } = require("@aws-sdk/client-sns");
+import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
 
-const sns = new SNS({
+const sns = new SNSClient({
   apiVersion: "2010-03-31",
   region: process.env.PORTER_SNS_TOPIC.split(":")[3],
 });
@@ -16,12 +16,12 @@ const sns = new SNS({
  * @param {string} sourceObjectName - The name of the exported object in Google Cloud Storage
  * @param {string} fileSequenceId - 000000000000, 000000000001, etc
  */
-module.exports = async function main(
+export default async function makeCopies(
   extractionType,
   config,
   sourceBucketName,
   sourceObjectName,
-  fileSequenceId
+  fileSequenceId,
 ) {
   if (config.copies?.length) {
     const credentials = config.bigQueryClient.authClient.jsonContent;
@@ -63,19 +63,19 @@ module.exports = async function main(
               // Replace each format directive
               .replace(
                 /%RANGE_START_ISO/g,
-                config.inclusiveRangeStart.toISOString()
+                config.inclusiveRangeStart.toISOString(),
               )
               .replace(
                 /%RANGE_START_DATE_ISO/g,
-                config.inclusiveRangeStart.toISOString().split("T")[0]
+                config.inclusiveRangeStart.toISOString().split("T")[0],
               )
               .replace(
                 /%RANGE_END_ISO/g,
-                config.exclusiveRangeEnd.toISOString()
+                config.exclusiveRangeEnd.toISOString(),
               )
               .replace(
                 /%RANGE_END_DATE_ISO/g,
-                config.exclusiveRangeEnd.toISOString().split("T")[0]
+                config.exclusiveRangeEnd.toISOString().split("T")[0],
               )
               .replace(/%TYPE/g, extractionType)
               .replace(/%REQUEST_ID/g, config.requestId)
@@ -90,7 +90,7 @@ module.exports = async function main(
                   Source: `gs://${sourceBucketName}/${sourceObjectName}`,
                   Destination: `s3://${c.BucketName}/${destinationKey}`,
                 },
-              })
+              }),
             );
 
             return {
@@ -110,9 +110,11 @@ module.exports = async function main(
 
     console.log(JSON.stringify({ PorterJob: job }));
 
-    await sns.publish({
-      Message: JSON.stringify(job),
-      TopicArn: process.env.PORTER_SNS_TOPIC,
-    });
+    await sns.send(
+      new PublishCommand({
+        Message: JSON.stringify(job),
+        TopicArn: process.env.PORTER_SNS_TOPIC,
+      }),
+    );
   }
-};
+}

@@ -3,7 +3,7 @@
 /**
  * @param {ExportConfig} config
  */
-module.exports = async function main(config) {
+export default async function job(config) {
   const query = `
     SELECT
       FORMAT_TIMESTAMP("%m/%d/%Y", timestamp) AS Date,
@@ -26,4 +26,4 @@ module.exports = async function main(config) {
   });
 
   return queryJob;
-};
+}
