@@ -1,4 +1,4 @@
-/** @typedef {import('../index').ExportConfig} ExportConfig */
+/** @typedef {import('../index.js').ExportConfig} ExportConfig */
 
 /**
  * @param {ExportConfig} config

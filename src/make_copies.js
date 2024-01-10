@@ -5,7 +5,7 @@ const sns = new SNSClient({
   region: process.env.PORTER_SNS_TOPIC.split(":")[3],
 });
 
-/** @typedef {import('./index').ExportConfig} ExportConfig */
+/** @typedef {import('./index.js').ExportConfig} ExportConfig */
 
 /**
  * Sends Copy tasks to Porter to copy an object from Google Cloud Storage to

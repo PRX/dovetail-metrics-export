@@ -1,17 +1,17 @@
-import MakeCopies from "./make_copies";
+import MakeCopies from "./make_copies.js";
 
-import queryForDownloads from "./query-jobs/downloads";
-import queryForEpisodeMetadata from "./query-jobs/episode_metadata";
-import queryForGeoMetadata from "./query-jobs/geo_metadata";
-import queryForImpressions from "./query-jobs/impressions";
-import queryForBoostrImpressions from "./query-jobs/boostr_impressions";
-import queryForPodcastMetadata from "./query-jobs/podcast_metadata";
-import queryForUserAgentMetadata from "./query-jobs/user_agent_metadata";
-import queryForAdvertiserMetadata from "./query-jobs/advertiser_metadata";
-import queryForCampaignMetadata from "./query-jobs/campaign_metadata";
-// import queryForCreativeMetadata from './query-jobs/creative_metadata';
-import queryForFlightMetadata from "./query-jobs/flight_metadata";
-import queryForPlacementMetadata from "./query-jobs/placement_metadata";
+import queryForDownloads from "./query-jobs/downloads.js";
+import queryForEpisodeMetadata from "./query-jobs/episode_metadata.js";
+import queryForGeoMetadata from "./query-jobs/geo_metadata.js";
+import queryForImpressions from "./query-jobs/impressions.js";
+import queryForBoostrImpressions from "./query-jobs/boostr_impressions.js";
+import queryForPodcastMetadata from "./query-jobs/podcast_metadata.js";
+import queryForUserAgentMetadata from "./query-jobs/user_agent_metadata.js";
+import queryForAdvertiserMetadata from "./query-jobs/advertiser_metadata.js";
+import queryForCampaignMetadata from "./query-jobs/campaign_metadata.js";
+// import queryForCreativeMetadata from "./query-jobs/creative_metadata.js";
+import queryForFlightMetadata from "./query-jobs/flight_metadata.js";
+import queryForPlacementMetadata from "./query-jobs/placement_metadata.js";
 
 // The values should never include an "*", or output files could get real weird
 const JOB_TYPES = {
@@ -29,7 +29,7 @@ const JOB_TYPES = {
   PLACEMENT_METADATA: "placement_metadata",
 };
 
-/** @typedef {import('./index').ExportConfig} ExportConfig */
+/** @typedef {import('./index.js').ExportConfig} ExportConfig */
 
 /**
  * This object prefix is used for all files created by all exports, like:
