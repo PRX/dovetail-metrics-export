@@ -13,4 +13,4 @@ ADD . .
 
 # This zip file is what will be deployed to the Lambda function.
 # Add any necessary files to it.
-RUN zip --quiet --recurse-paths /.prxci/build.zip src
+RUN zip --quiet --recurse-paths /.prxci/build.zip src package.json
