@@ -25,7 +25,11 @@ export default async function job(config) {
       unique_per_campaign,
       unique_per_advertiser,
       created_at,
-      updated_at
+      updated_at,
+      external_id,
+      price_model,
+      price_cents,
+      price_currency
     FROM ${process.env.BIGQUERY_DATASET}.flights
     WHERE podcast_id IN (${config.podcastIds.join(", ")})
   `;
