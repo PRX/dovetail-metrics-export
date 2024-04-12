@@ -12,7 +12,11 @@ export default async function job(config) {
       name,
       type,
       created_at,
-      updated_at
+      updated_at,
+      external_id,
+      budget_model,
+      budget_cents,
+      budget_currency
     FROM ${process.env.BIGQUERY_DATASET}.campaigns
     WHERE id IN (
       SELECT DISTINCT campaign_id FROM ${process.env.BIGQUERY_DATASET}.flights
