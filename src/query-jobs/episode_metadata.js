@@ -19,7 +19,7 @@ export default async function job(config) {
       deleted_at,
       segment_count,
       audio_version,
-      TO_JSON_STRING(keywords) as keywords_json
+      TO_JSON_STRING(categories) as keywords_json
     FROM ${process.env.BIGQUERY_DATASET}.episodes
     WHERE podcast_id IN (${config.podcastIds.join(", ")})
   `;
