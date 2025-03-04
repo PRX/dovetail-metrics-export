@@ -5,6 +5,7 @@
  */
 export default async function job(config) {
   const ds = process.env.BIGQUERY_DATASET;
+  const ids = config.integrationIds.join(", ");
   const query = `
     WITH top_flights AS (
       SELECT
@@ -14,7 +15,7 @@ export default async function job(config) {
         COALESCE(f.integration_id, p.integration_id) AS integration_id
       FROM ${ds}.flights f
       LEFT JOIN ${ds}.flights p ON (f.parent_id = p.id)
-      WHERE COALESCE(f.integration_id, p.integration_id) IN (${config.integrationIds.join(", ")})
+      WHERE COALESCE(f.integration_id, p.integration_id) IN (${ids})
     )
     SELECT
       FORMAT_TIMESTAMP("%m/%d/%Y", i.timestamp) AS Date,
