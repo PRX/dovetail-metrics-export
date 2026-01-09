@@ -1,4 +1,4 @@
-import { SNSClient, PublishCommand } from "@aws-sdk/client-sns";
+import { PublishCommand, SNSClient } from "@aws-sdk/client-sns";
 
 const sns = new SNSClient({
   apiVersion: "2010-03-31",
@@ -27,9 +27,8 @@ export default async function makeCopies(
     const credentials = config.bigQueryClient.authClient.jsonContent;
 
     const projectId =
-      // @ts-ignore
       credentials.project_id ||
-      // @ts-ignore
+      // @ts-expect-error
       credentials.audience.match(/projects\/([0-9]+)\/locations/)[1];
 
     const job = {

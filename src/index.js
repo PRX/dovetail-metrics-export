@@ -1,5 +1,5 @@
 import { BigQuery } from "@google-cloud/bigquery";
-import { types, run } from "./extraction.js";
+import { run, types } from "./extraction.js";
 
 /**
  * @typedef {object} ExportConfig
