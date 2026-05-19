@@ -19,14 +19,14 @@
   "homepage": "https://github.com/PRX/dovetail-metrics-export.org#readme",
   "dependencies": {
     "@aws-sdk/client-sns": "*",
-    "@google-cloud/bigquery": "^8.3.0"
+    "@google-cloud/bigquery": "^8.3.1"
   },
   "devDependencies": {
     "@biomejs/biome": "*",
     "@types/aws-lambda": "*",
     "@types/node": "*",
     "jsdoc": "*",
-    "typescript": "^5",
+    "typescript": "^6",
     "yarn": "*"
   }
 }
