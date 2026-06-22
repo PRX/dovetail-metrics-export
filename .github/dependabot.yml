@@ -4,6 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: weekly
+    cooldown:
+      default-days: 10
     open-pull-requests-limit: 10
     versioning-strategy: lockfile-only
     groups:
@@ -14,4 +16,6 @@ updates:
     directory: "/"
     schedule:
       interval: daily
+    cooldown:
+      default-days: 4
     open-pull-requests-limit: 10
