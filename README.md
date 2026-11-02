@@ -19,7 +19,6 @@ While this Lambda function run in AWS, it makes API calls to Google Cloud via th
 ```
 
 The `service_account_impersonation_url` should include the email of a service account in GCP with the following permissions:
-
 - BigQuery Job User (`roles/bigquery.jobUser`) to create BigQuery Jobs
 - BigQuery Data Viewer (`roles/bigquery.dataViewer`) to read data from BigQuery for the jobs
 - Storage Object Creator (`roles/storage.objectCreator`) to write the results of the jobs to Storage
@@ -40,7 +39,6 @@ The identity provider attribute condition should look something like:
 All files are currently formatted as newline-delimited JSON and compressed with GZIP by default. Other formats can be configured.
 
 Excluding all prefixes, the resulting files in Google Cloud Storage are named:
-
 - downloads.ndjson.gz
 - impressions.ndjson.gz
 - podcast_metadata.ndjson.gz
@@ -99,10 +97,7 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - creative_metadata
   # - flight_metadata
   # - placement_metadata
-  Extractions: [
-    downloads,
-    impressions
-  ],
+  Extractions: [downloads, impressions],
   # OPTIONAL
   # - A prefix that is added to all files created in Google Cloud Storage.
   # - This string must include a trailing slash if you want to separate the
@@ -130,13 +125,14 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # - %FILE_SEQ_ID - This MUST appear somewhere in the custom format, or it will
   #   be added automatically to the end, which you probably don't want, e.g.,
   #   000000000000, 000000000001
-  Copies: [
-    {
-      "Mode": "AWS/S3",
-      "BucketName": "MyBucket",
-      "DestinationFormat": "Acme/%TYPE/%REQUEST_ID-%FILE_SEQ_ID.ndjson.gz"
-    }
-  ],
+  Copies:
+    [
+      {
+        "Mode": "AWS/S3",
+        "BucketName": "MyBucket",
+        "DestinationFormat": "Acme/%TYPE/%REQUEST_ID-%FILE_SEQ_ID.ndjson.gz",
+      },
+    ],
   # OPTIONAL
   # - NEWLINE_DELIMITED_JSON (default)
   # - CSV
@@ -144,6 +140,6 @@ For example, if it is currently `2022-05-05T12:34:56Z`, the range will be `["202
   # OPTIONAL
   # - GZIP (default)
   # - NONE
-  CompressionType: "GZIP"
+  CompressionType: "GZIP",
 }
 ```
