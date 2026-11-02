@@ -5,6 +5,5 @@ Therefore, permissions are needed for working with resources in both clouds.
 ### AWS Permissions
 
 Any permissions that the Lambda function needs for working with resources in AWS should be configured in the app's [CloudFormation template](https://github.com/PRX/Infrastructure/blob/master/stacks/apps/dovetail-metrics-export.yml). Some of the permissions it may need include:
-
 - Reading values from Parameter Store
 - Sending jobs to Porter
